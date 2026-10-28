@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -53,7 +54,26 @@ export default function CustomerVisitsScreen() {
     }
   };
 
-  const handleCancelVisit = (visitId: number) => {
+  const handleCancelVisit = async (visitId: number) => {
+    const doCancel = async () => {
+      try {
+        await visitService.updateVisitStatus(visitId, 'cancelled');
+        setVisits((prev) =>
+          prev.map((v) => (v.id === visitId ? { ...v, status: 'cancelled' } : v))
+        );
+      } catch (err: any) {
+        Alert.alert('Error', err.response?.data?.detail || 'Could not cancel visit');
+      }
+    };
+
+    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+      const confirmed = window.confirm('Are you sure you want to cancel this scheduled property visit?');
+      if (confirmed) {
+        await doCancel();
+      }
+      return;
+    }
+
     Alert.alert(
       'Cancel Visit',
       'Are you sure you want to cancel this scheduled property visit?',
@@ -62,16 +82,7 @@ export default function CustomerVisitsScreen() {
         {
           text: 'Yes, Cancel',
           style: 'destructive',
-          onPress: async () => {
-            try {
-              await visitService.updateVisitStatus(visitId, 'cancelled');
-              setVisits((prev) =>
-                prev.map((v) => (v.id === visitId ? { ...v, status: 'cancelled' } : v))
-              );
-            } catch (err: any) {
-              Alert.alert('Error', err.response?.data?.detail || 'Could not cancel visit');
-            }
-          },
+          onPress: doCancel,
         },
       ]
     );

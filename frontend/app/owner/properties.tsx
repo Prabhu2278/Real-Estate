@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   Alert,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +16,7 @@ import { Sidebar } from '../../components/navigation/Sidebar';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
+import { Modal } from '../../components/common/Modal';
 import { COLORS, RADIUS, SHADOWS, SPACING } from '../../constants/theme';
 import { formatPrice, formatDate } from '../../utils/format';
 import { ownerService } from '../../services/owner.service';
@@ -31,6 +33,8 @@ export default function OwnerPropertiesScreen() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [loading, setLoading] = useState<boolean>(true);
+  const [deleteTarget, setDeleteTarget] = useState<Property | null>(null);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -41,7 +45,6 @@ export default function OwnerPropertiesScreen() {
       loadProperties();
     }
   }, [isAuthenticated, isLoading, statusFilter]);
-
 
   const loadProperties = async () => {
     try {
@@ -67,26 +70,27 @@ export default function OwnerPropertiesScreen() {
     }
   };
 
-  const handleDeleteProperty = (propertyId: number) => {
-    Alert.alert(
-      'Delete Property',
-      'Are you sure you want to permanently delete this listing? This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await propertyService.deleteProperty(propertyId);
-              setProperties((prev) => prev.filter((p) => p.id !== propertyId));
-            } catch (err: any) {
-              Alert.alert('Error', err.response?.data?.detail || 'Failed to delete property');
-            }
-          },
-        },
-      ]
-    );
+  const handleDeleteClick = (prop: Property) => {
+    setDeleteTarget(prop);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
+    try {
+      setIsDeleting(true);
+      await propertyService.deleteProperty(deleteTarget.id);
+      setProperties((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      setDeleteTarget(null);
+    } catch (err: any) {
+      const msg = err.response?.data?.detail || err.message || 'Failed to delete property';
+      if (Platform.OS === 'web' && typeof window !== 'undefined') {
+        window.alert(`Error: ${msg}`);
+      } else {
+        Alert.alert('Error', msg);
+      }
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const filterTabs = [
@@ -224,7 +228,7 @@ export default function OwnerPropertiesScreen() {
 
                         <TouchableOpacity
                           style={styles.deleteBtn}
-                          onPress={() => handleDeleteProperty(prop.id)}
+                          onPress={() => handleDeleteClick(prop)}
                         >
                           <Ionicons name="trash-outline" size={16} color={COLORS.danger} />
                         </TouchableOpacity>
@@ -237,6 +241,49 @@ export default function OwnerPropertiesScreen() {
           )}
         </ScrollView>
       </View>
+
+      {/* DELETE CONFIRMATION MODAL */}
+      <Modal
+        visible={!!deleteTarget}
+        onClose={() => !isDeleting && setDeleteTarget(null)}
+        title="Delete Listing"
+        maxWidth={460}
+      >
+        <View style={styles.confirmModalContent}>
+          <View style={styles.confirmModalIconWrap}>
+            <Ionicons name="trash-outline" size={36} color={COLORS.danger} />
+          </View>
+          <Text style={styles.confirmModalTitle}>Delete "{deleteTarget?.title}"?</Text>
+          <Text style={styles.confirmModalDesc}>
+            Are you sure you want to permanently delete this listing? This action cannot be undone and will remove all property images, visits, and customer inquiries.
+          </Text>
+
+          <View style={styles.confirmModalButtons}>
+            <TouchableOpacity
+              style={styles.cancelModalBtn}
+              onPress={() => setDeleteTarget(null)}
+              disabled={isDeleting}
+            >
+              <Text style={styles.cancelModalBtnText}>Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.deleteModalBtn, isDeleting && { opacity: 0.7 }]}
+              onPress={handleConfirmDelete}
+              disabled={isDeleting}
+            >
+              {isDeleting ? (
+                <Text style={styles.deleteModalBtnText}>Deleting...</Text>
+              ) : (
+                <>
+                  <Ionicons name="trash" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+                  <Text style={styles.deleteModalBtnText}>Delete Listing</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -431,5 +478,68 @@ const styles = StyleSheet.create({
   deleteBtn: {
     padding: 6,
     marginLeft: 'auto',
+  },
+  confirmModalContent: {
+    alignItems: 'center',
+    paddingVertical: SPACING.sm,
+  },
+  confirmModalIconWrap: {
+    width: 60,
+    height: 60,
+    borderRadius: RADIUS.full,
+    backgroundColor: COLORS.dangerLight,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.md,
+  },
+  confirmModalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  confirmModalDesc: {
+    fontSize: 14,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: SPACING.xl,
+  },
+  confirmModalButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  cancelModalBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  cancelModalBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
+  deleteModalBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.danger,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  deleteModalBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
 });

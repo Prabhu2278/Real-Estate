@@ -184,5 +184,7 @@ def update_property(db: Session, db_property: Property, property_in: PropertyUpd
     return db_property
 
 def delete_property(db: Session, db_property: Property) -> None:
+    db_property.amenities = []
+    db.flush()
     db.delete(db_property)
     db.commit()
