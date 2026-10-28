@@ -86,7 +86,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
         />
 
         {/* Listing Type Tag */}
-        <View style={styles.tag}>
+        <View style={[styles.tag, property.listing_type === 'rent' ? styles.tagRent : styles.tagSale]}>
           <Text style={styles.tagText}>
             {property.listing_type === 'rent' ? 'For Rent' : 'For Sale'}
           </Text>
@@ -210,23 +210,30 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 12,
     left: 12,
-    backgroundColor: 'rgba(31, 41, 55, 0.85)',
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: RADIUS.sm,
+    ...SHADOWS.sm,
+  },
+  tagRent: {
+    backgroundColor: COLORS.primary,
+  },
+  tagSale: {
+    backgroundColor: COLORS.secondary,
   },
   tagText: {
     color: '#FFFFFF',
     fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.3,
   },
   favBtn: {
     position: 'absolute',
     top: 12,
     right: 12,
-    backgroundColor: 'rgba(0,0,0,0.4)',
-    width: 32,
-    height: 32,
+    backgroundColor: 'rgba(17, 24, 39, 0.65)',
+    width: 36,
+    height: 36,
     borderRadius: RADIUS.full,
     alignItems: 'center',
     justifyContent: 'center',

@@ -247,6 +247,7 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     padding: SPACING.lg,
+    maxWidth: 1300,
   },
   topHeader: {
     flexDirection: 'row',
@@ -284,7 +285,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   statsRowMobile: {
-    flexDirection: 'column',
+    gap: 10,
   },
   cardBox: {
     backgroundColor: '#FFFFFF',

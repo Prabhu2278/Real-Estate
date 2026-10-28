@@ -25,6 +25,7 @@ export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
   const isTablet = width >= 768 && width < 1024;
+  const isSmallMobile = width < 540;
 
   const scrollViewRef = useRef<any>(null);
 
@@ -203,7 +204,7 @@ export default function HomeScreen() {
             {popularLocations.map((loc) => (
               <TouchableOpacity
                 key={loc.name}
-                style={[styles.gridCol, isMobile ? styles.gridCol12 : isTablet ? styles.gridCol6 : styles.gridCol3]}
+                style={[styles.gridCol, isSmallMobile ? styles.gridCol12 : (isMobile || isTablet) ? styles.gridCol6 : styles.gridCol3]}
                 onPress={() => router.push(`/properties?city=${loc.city}&search=${loc.name}` as any)}
                 activeOpacity={0.88}
               >
@@ -940,14 +941,16 @@ const styles = StyleSheet.create({
   },
   aboutStatsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 16,
     marginBottom: 32,
   },
   aboutStatsGridMobile: {
-    flexDirection: 'column',
+    gap: 12,
   },
   aboutStatCard: {
     flex: 1,
+    minWidth: 140,
     backgroundColor: COLORS.backgroundMuted,
     borderRadius: RADIUS.lg,
     padding: 16,
@@ -976,14 +979,16 @@ const styles = StyleSheet.create({
   },
   aboutPillarsRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 16,
     marginBottom: 40,
   },
   aboutPillarsRowMobile: {
-    flexDirection: 'column',
+    gap: 12,
   },
   aboutPillarCard: {
     flex: 1,
+    minWidth: 220,
     backgroundColor: COLORS.backgroundSubtle,
     borderRadius: RADIUS.lg,
     padding: 20,
@@ -1028,14 +1033,16 @@ const styles = StyleSheet.create({
   },
   contactCardsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 16,
     marginBottom: 28,
   },
   contactCardsGridMobile: {
-    flexDirection: 'column',
+    gap: 12,
   },
   contactCard: {
     flex: 1,
+    minWidth: 200,
     backgroundColor: COLORS.backgroundMuted,
     borderWidth: 1,
     borderColor: COLORS.border,

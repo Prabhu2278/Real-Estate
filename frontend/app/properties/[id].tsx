@@ -205,7 +205,7 @@ export default function PropertyDetailScreen() {
                         {property.property_type} · {property.listing_type === 'rent' ? 'For Rent' : 'For Sale'}
                       </Text>
                     </View>
-                    <Text style={styles.title}>{property.title}</Text>
+                    <Text style={[styles.title, isMobile && { fontSize: 20, lineHeight: 26 }]}>{property.title}</Text>
                     <View style={styles.locationRow}>
                       <Ionicons name="location-outline" size={16} color={COLORS.textMuted} style={{ marginRight: 4 }} />
                       <Text style={styles.locationText}>{property.address}, {property.city}, {property.state}</Text>
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
   },
   mainCol: {
     flex: 1,
-    minWidth: 320,
+    minWidth: 0,
   },
   sideCol: {
     width: 360,

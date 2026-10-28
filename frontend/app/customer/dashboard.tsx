@@ -13,7 +13,7 @@ import { Sidebar } from '../../components/navigation/Sidebar';
 import { StatCard } from '../../components/dashboard/StatCard';
 import { PropertyCard } from '../../components/property/PropertyCard';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
-import { COLORS, RADIUS, SPACING } from '../../constants/theme';
+import { COLORS, RADIUS, SHADOWS, SPACING } from '../../constants/theme';
 import { favoritesService } from '../../services/favorites.service';
 import { enquiryService } from '../../services/enquiry.service';
 import { visitService } from '../../services/visit.service';
@@ -233,6 +233,7 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     padding: SPACING.lg,
+    maxWidth: 1300,
   },
   topHeader: {
     marginBottom: SPACING.lg,
@@ -249,11 +250,12 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
-    gap: 16,
+    flexWrap: 'wrap',
+    gap: 14,
     marginBottom: SPACING.xl,
   },
   statsRowMobile: {
-    flexDirection: 'column',
+    gap: 10,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -298,6 +300,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.border,
     alignItems: 'center',
     marginBottom: SPACING.lg,
+    ...SHADOWS.sm,
   },
   emptyText: {
     fontSize: 14,
@@ -307,7 +310,7 @@ const styles = StyleSheet.create({
   exploreBtn: {
     backgroundColor: COLORS.primary,
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: RADIUS.md,
   },
   exploreBtnText: {
@@ -331,6 +334,7 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
+    ...SHADOWS.sm,
   },
   cardBoxHeader: {
     flexDirection: 'row',

@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     padding: SPACING.lg,
+    maxWidth: 1300,
   },
   header: {
     marginBottom: SPACING.lg,
@@ -229,11 +230,12 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: 'row',
-    gap: 16,
+    flexWrap: 'wrap',
+    gap: 14,
     marginBottom: SPACING.lg,
   },
   statsRowMobile: {
-    flexDirection: 'column',
+    gap: 10,
   },
   twoColRow: {
     flexDirection: 'row',

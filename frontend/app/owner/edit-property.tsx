@@ -17,6 +17,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Navbar } from '../../components/navigation/Navbar';
 import { Sidebar } from '../../components/navigation/Sidebar';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
+import { Modal } from '../../components/common/Modal';
 import { COLORS, RADIUS, SHADOWS, SPACING } from '../../constants/theme';
 import { PROPERTY_TYPES, FURNISHING_OPTIONS } from '../../constants/config';
 import { propertyService } from '../../services/property.service';
@@ -35,6 +36,8 @@ export default function EditPropertyScreen() {
   const [loading, setLoading] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [confirmModalOpen, setConfirmModalOpen] = useState<boolean>(false);
+  const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
 
   // Form Fields
   const [title, setTitle] = useState<string>('');
@@ -132,12 +135,17 @@ export default function EditPropertyScreen() {
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const handleSave = async () => {
+  const handlePressSave = () => {
     if (!title.trim() || !price || !description.trim()) {
       setErrorMessage('Please fill in title, price, and description.');
       return;
     }
+    setErrorMessage(null);
+    setConfirmModalOpen(true);
+  };
 
+  const handleConfirmSave = async () => {
+    setConfirmModalOpen(false);
     try {
       setSaving(true);
       setErrorMessage(null);
@@ -159,14 +167,17 @@ export default function EditPropertyScreen() {
         image_urls: images,
       });
 
-      Alert.alert('Success', 'Property changes saved successfully!', [
-        { text: 'OK', onPress: () => router.push('/owner/properties' as any) },
-      ]);
+      setSuccessModalOpen(true);
     } catch (err: any) {
       setErrorMessage(getApiErrorMessage(err, 'Failed to update property.'));
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleSuccessOk = () => {
+    setSuccessModalOpen(false);
+    router.push('/owner/properties' as any);
   };
 
   if (loading) {
@@ -394,16 +405,86 @@ export default function EditPropertyScreen() {
               ))}
             </View>
 
-            <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
+            <TouchableOpacity style={styles.saveBtn} onPress={handlePressSave} disabled={saving} activeOpacity={0.8}>
               {saving ? (
                 <ActivityIndicator color="#FFFFFF" size="small" />
               ) : (
-                <Text style={styles.saveBtnText}>Save Changes</Text>
+                <>
+                  <Ionicons name="checkmark-circle-outline" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
+                  <Text style={styles.saveBtnText}>Save Changes</Text>
+                </>
               )}
             </TouchableOpacity>
           </View>
         </ScrollView>
       </View>
+
+      {/* CONFIRMATION MODAL */}
+      <Modal
+        visible={confirmModalOpen}
+        onClose={() => !saving && setConfirmModalOpen(false)}
+        title="Confirm Updates"
+        maxWidth={460}
+      >
+        <View style={styles.modalContent}>
+          <View style={[styles.modalIconWrap, { backgroundColor: '#EEF2FF' }]}>
+            <Ionicons name="help-circle-outline" size={38} color={COLORS.primary} />
+          </View>
+          <Text style={styles.modalTitle}>Save Property Changes?</Text>
+          <Text style={styles.modalDesc}>
+            Are you sure you want to save the updated details and photos for "{title || 'this property'}"?
+          </Text>
+
+          <View style={styles.modalButtonsRow}>
+            <TouchableOpacity
+              style={styles.cancelModalBtn}
+              onPress={() => setConfirmModalOpen(false)}
+              disabled={saving}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.cancelModalBtnText}>No, Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.confirmModalBtn}
+              onPress={handleConfirmSave}
+              disabled={saving}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="checkmark-done" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+              <Text style={styles.confirmModalBtnText}>Yes, Save</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* SUCCESS POPUP MODAL */}
+      <Modal
+        visible={successModalOpen}
+        onClose={handleSuccessOk}
+        title="Changes Saved"
+        maxWidth={460}
+      >
+        <View style={styles.modalContent}>
+          <View style={[styles.modalIconWrap, { backgroundColor: '#ECFDF5' }]}>
+            <Ionicons name="checkmark-circle" size={44} color={COLORS.secondary} />
+          </View>
+          <Text style={styles.modalTitle}>Changes Updated Successfully!</Text>
+          <Text style={styles.modalDesc}>
+            Your property details, pricing, specifications, and photographs have been successfully updated.
+          </Text>
+
+          <View style={styles.modalButtonsRow}>
+            <TouchableOpacity
+              style={[styles.confirmModalBtn, { flex: 1, backgroundColor: COLORS.secondary }]}
+              onPress={handleSuccessOk}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.confirmModalBtnText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -679,14 +760,78 @@ const styles = StyleSheet.create({
   },
   saveBtn: {
     backgroundColor: COLORS.primary,
+    flexDirection: 'row',
     paddingVertical: 12,
     borderRadius: RADIUS.md,
     alignItems: 'center',
+    justifyContent: 'center',
     marginTop: 10,
   },
   saveBtnText: {
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '700',
+  },
+  modalContent: {
+    alignItems: 'center',
+    paddingVertical: SPACING.sm,
+  },
+  modalIconWrap: {
+    width: 68,
+    height: 68,
+    borderRadius: RADIUS.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.md,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  modalDesc: {
+    fontSize: 14,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: SPACING.xl,
+  },
+  modalButtonsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  cancelModalBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  cancelModalBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
+  confirmModalBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  confirmModalBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 });

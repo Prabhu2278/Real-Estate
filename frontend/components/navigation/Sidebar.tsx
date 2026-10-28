@@ -108,7 +108,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ role = 'customer' }) => {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.userName} numberOfLines={1}>{user.full_name}</Text>
-            <Text style={styles.userRole}>{user.role}</Text>
+            <Text style={styles.userRole}>
+              {user.role === 'admin'
+                ? 'Administrator'
+                : user.role === 'owner'
+                ? 'Verified Landlord'
+                : 'Verified Tenant'}
+            </Text>
           </View>
         </View>
       )}
@@ -134,7 +140,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ role = 'customer' }) => {
           </View>
           <Text style={styles.logoText}>RealEstate</Text>
           <View style={styles.rolePill}>
-            <Text style={styles.rolePillText}>{role.toUpperCase()}</Text>
+            <Text style={styles.rolePillText}>
+              {role === 'admin' ? 'ADMIN' : role === 'owner' ? 'LANDLORD' : 'HOME SEEKER'}
+            </Text>
           </View>
         </TouchableOpacity>
 

@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     padding: SPACING.lg,
+    maxWidth: 1300,
   },
   header: {
     marginBottom: SPACING.lg,

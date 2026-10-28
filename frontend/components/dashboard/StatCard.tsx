@@ -19,7 +19,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   subtitle,
 }) => {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, { borderLeftColor: color, borderLeftWidth: 4 }]}>
       <View style={styles.contentRow}>
         <View style={styles.textColumn}>
           <Text style={styles.title} numberOfLines={1}>{title}</Text>
@@ -28,8 +28,8 @@ export const StatCard: React.FC<StatCardProps> = ({
         </View>
 
         {icon && (
-          <View style={[styles.iconWrap, { backgroundColor: `${color}15` }]}>
-            <Ionicons name={icon} size={20} color={color} />
+          <View style={[styles.iconWrap, { backgroundColor: `${color}18` }]}>
+            <Ionicons name={icon} size={22} color={color} />
           </View>
         )}
       </View>
@@ -44,14 +44,14 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
-    minWidth: 130,
+    minWidth: 140,
     flex: 1,
     ...SHADOWS.sm,
   },
   contentRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   textColumn: {
     flex: 1,
@@ -61,10 +61,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.textMuted,
     marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   value: {
-    fontSize: 24,
-    fontWeight: '700',
+    fontSize: 26,
+    fontWeight: '800',
     color: COLORS.text,
   },
   subtitle: {
@@ -73,11 +75,11 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   iconWrap: {
-    width: 40,
-    height: 40,
+    width: 44,
+    height: 44,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 6,
+    marginLeft: 8,
   },
 });

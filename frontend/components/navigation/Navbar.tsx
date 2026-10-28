@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: COLORS.text,
-    maxWidth: 90,
+    maxWidth: 140,
   },
   logoutBtn: {
     padding: 6,

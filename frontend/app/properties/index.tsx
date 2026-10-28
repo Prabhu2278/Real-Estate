@@ -24,7 +24,10 @@ export default function PropertyListingScreen() {
   const router = useRouter();
   const searchParams = useLocalSearchParams();
   const { width } = useWindowDimensions();
-  const isMobile = width < 900;
+  const isCompact = width < 992;
+  const isMobile = width < 680;
+  const isTablet = width >= 680 && width < 1024;
+  const isWide = width >= 1400;
 
   const [filters, setFilters] = useState<PropertyFilterParams>({
     city: (searchParams.city as string) || undefined,
@@ -84,8 +87,8 @@ export default function PropertyListingScreen() {
               </Text>
             </View>
 
-            {/* Mobile Filter Button */}
-            {isMobile && (
+            {/* Mobile / Tablet Filter Button */}
+            {isCompact && (
               <TouchableOpacity
                 style={styles.mobileFilterBtn}
                 onPress={() => setMobileFilterOpen(true)}
@@ -99,7 +102,7 @@ export default function PropertyListingScreen() {
           {/* Main Layout: Left Filter Sidebar + Right Results */}
           <View style={styles.layoutRow}>
             {/* Desktop Filter Panel */}
-            {!isMobile && (
+            {!isCompact && (
               <View style={styles.sidebarCol}>
                 <FilterPanel
                   filters={filters}
@@ -205,7 +208,14 @@ export default function PropertyListingScreen() {
                       key={prop.id}
                       style={
                         viewLayout === 'grid'
-                          ? [styles.gridItem, isMobile ? styles.gridItemMobile : styles.gridItemDesktop]
+                          ? [
+                              styles.gridItem,
+                              isMobile
+                                ? styles.gridItemMobile
+                                : isWide
+                                ? styles.gridItemWide
+                                : styles.gridItemDesktop,
+                            ]
                           : styles.listItem
                       }
                     >
@@ -430,6 +440,9 @@ const styles = StyleSheet.create({
   },
   gridItemDesktop: {
     width: '50%',
+  },
+  gridItemWide: {
+    width: '33.333%',
   },
   gridItemMobile: {
     width: '100%',

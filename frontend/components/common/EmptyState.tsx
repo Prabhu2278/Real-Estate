@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, RADIUS, SPACING } from '../../constants/theme';
+import { COLORS, RADIUS, SHADOWS, SPACING } from '../../constants/theme';
 
 interface EmptyStateProps {
   icon?: keyof typeof Ionicons.glyphMap;
@@ -36,7 +36,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: SPACING.xxl,
+    paddingVertical: SPACING.xl,
+    paddingHorizontal: SPACING.md,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#FFFFFF',
@@ -44,6 +45,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     marginVertical: SPACING.md,
+    ...SHADOWS.sm,
   },
   iconWrap: {
     width: 72,

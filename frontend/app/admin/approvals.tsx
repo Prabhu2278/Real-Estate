@@ -142,7 +142,7 @@ export default function AdminApprovalsScreen() {
                           </Text>
                         </View>
 
-                        <View style={styles.ownerBadge}>
+                        <View style={[styles.ownerBadge, isMobile && { alignItems: 'flex-start', alignSelf: 'stretch' }]}>
                           <Text style={styles.ownerLabel}>Submitted by:</Text>
                           <Text style={styles.ownerName}>
                             {prop.owner?.full_name || `Owner #${prop.owner_id}`}
@@ -168,17 +168,17 @@ export default function AdminApprovalsScreen() {
                       {/* Action Buttons */}
                       <View style={[styles.actionsRow, isMobile && { flexWrap: 'wrap', gap: 8 }]}>
                         <TouchableOpacity
-                          style={styles.viewBtn}
+                          style={[styles.viewBtn, isMobile && { flex: 1, minWidth: 120 }]}
                           onPress={() => router.push(`/properties/${prop.id}` as any)}
                         >
                           <Ionicons name="open-outline" size={14} color={COLORS.primary} style={{ marginRight: 4 }} />
                           <Text style={styles.viewBtnText}>Preview Details</Text>
                         </TouchableOpacity>
 
-                        <View style={{ flex: 1 }} />
+                        {!isMobile && <View style={{ flex: 1 }} />}
 
                         <TouchableOpacity
-                          style={styles.rejectBtn}
+                          style={[styles.rejectBtn, isMobile && { flex: 1, minWidth: 120 }]}
                           onPress={() => handleOpenReject(prop)}
                           disabled={actionLoading}
                         >
@@ -187,7 +187,7 @@ export default function AdminApprovalsScreen() {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                          style={styles.approveBtn}
+                          style={[styles.approveBtn, isMobile && { width: '100%', justifyContent: 'center' }]}
                           onPress={() => handleApprove(prop.id)}
                           disabled={actionLoading}
                         >
@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     padding: SPACING.lg,
+    maxWidth: 1300,
   },
   header: {
     marginBottom: SPACING.lg,
