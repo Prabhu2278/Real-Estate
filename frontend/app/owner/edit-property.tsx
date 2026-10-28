@@ -10,6 +10,7 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -52,6 +53,38 @@ export default function EditPropertyScreen() {
   const [availabilityStatus, setAvailabilityStatus] = useState<string>('available');
   const [images, setImages] = useState<string[]>([]);
   const [newImageUrl, setNewImageUrl] = useState<string>('');
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false);
+
+  const samplePhotos = [
+    { label: '🏢 Exterior', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🛋️ Living Room', url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🛏️ Bedroom', url: 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🍳 Kitchen', url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🌅 Balcony View', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🚿 Bathroom', url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1000&auto=format&fit=crop&q=80' },
+  ];
+
+  const handlePickFile = () => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+          setUploadingImage(true);
+          const data = await propertyService.uploadImage(file);
+          setImages((prev) => [...prev, data.url]);
+        } catch (err: any) {
+          setErrorMessage(getApiErrorMessage(err, 'Failed to upload image.'));
+        } finally {
+          setUploadingImage(false);
+        }
+      };
+      input.click();
+    }
+  };
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -284,24 +317,77 @@ export default function EditPropertyScreen() {
               </View>
             </View>
 
-            <Text style={[styles.sectionHeading, { marginTop: 16 }]}>Photos</Text>
+            <Text style={[styles.sectionHeading, { marginTop: 16 }]}>Property Photographs</Text>
+            <Text style={styles.subtext}>
+              Upload authentic, clear photos of the property. The first photo will be used as the primary display image.
+            </Text>
+
+            {/* Upload from Device / Computer Button */}
+            <TouchableOpacity
+              style={styles.uploadDeviceBtn}
+              onPress={handlePickFile}
+              disabled={uploadingImage}
+              activeOpacity={0.8}
+            >
+              {uploadingImage ? (
+                <ActivityIndicator color={COLORS.primary} size="small" style={{ marginRight: 8 }} />
+              ) : (
+                <Ionicons name="cloud-upload-outline" size={20} color={COLORS.primary} style={{ marginRight: 8 }} />
+              )}
+              <Text style={styles.uploadDeviceBtnText}>
+                {uploadingImage ? 'Uploading Image...' : 'Upload Photo from Device / Computer'}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Quick-Add Sample Photos */}
+            <Text style={styles.photoSectionSubtitle}>Or 1-click add realistic sample photos:</Text>
+            <View style={styles.samplePhotosRow}>
+              {samplePhotos.map((s) => (
+                <TouchableOpacity
+                  key={s.label}
+                  style={styles.samplePhotoChip}
+                  onPress={() => {
+                    if (!images.includes(s.url)) {
+                      setImages((prev) => [...prev, s.url]);
+                    }
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.samplePhotoChipText}>{s.label}</Text>
+                  <Ionicons name="add-circle" size={14} color={COLORS.primary} style={{ marginLeft: 4 }} />
+                </TouchableOpacity>
+              ))}
+            </View>
+
+            <Text style={[styles.photoSectionSubtitle, { marginTop: 16 }]}>Or paste an image URL:</Text>
+            {/* Add Image URL Row */}
             <View style={styles.addImageRow}>
               <TextInput
                 style={[styles.input, { flex: 1 }]}
-                placeholder="Add image URL..."
+                placeholder="Paste image URL (https://...)"
                 value={newImageUrl}
                 onChangeText={setNewImageUrl}
               />
               <TouchableOpacity style={styles.addImageBtn} onPress={handleAddImage}>
+                <Ionicons name="add" size={18} color="#FFFFFF" style={{ marginRight: 4 }} />
                 <Text style={styles.addImageBtnText}>Add</Text>
               </TouchableOpacity>
             </View>
 
+            {/* Photos Preview Grid */}
             <View style={styles.photosGrid}>
               {images.map((url, idx) => (
                 <View key={idx} style={styles.photoItem}>
                   <Image source={{ uri: url }} style={styles.photoThumb} />
-                  <TouchableOpacity style={styles.removePhotoBtn} onPress={() => handleRemoveImage(idx)}>
+                  {idx === 0 && (
+                    <View style={styles.primaryBadge}>
+                      <Text style={styles.primaryBadgeText}>Primary</Text>
+                    </View>
+                  )}
+                  <TouchableOpacity
+                    style={styles.removePhotoBtn}
+                    onPress={() => handleRemoveImage(idx)}
+                  >
                     <Ionicons name="close" size={14} color="#FFFFFF" />
                   </TouchableOpacity>
                 </View>
@@ -477,16 +563,70 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '600',
   },
+  subtext: {
+    fontSize: 13,
+    color: COLORS.textMuted,
+    marginBottom: 16,
+    lineHeight: 18,
+  },
+  uploadDeviceBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: RADIUS.md,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: COLORS.primary,
+    backgroundColor: '#EFF6FF',
+    marginBottom: 16,
+  },
+  uploadDeviceBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.primary,
+  },
+  photoSectionSubtitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: COLORS.textMuted,
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  samplePhotosRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16,
+  },
+  samplePhotoChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: RADIUS.full,
+  },
+  samplePhotoChipText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: COLORS.text,
+  },
   addImageRow: {
     flexDirection: 'row',
     gap: 10,
-    marginBottom: 14,
+    marginBottom: 16,
   },
   addImageBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: COLORS.primary,
     paddingHorizontal: 16,
     borderRadius: RADIUS.md,
-    justifyContent: 'center',
   },
   addImageBtnText: {
     color: '#FFFFFF',
@@ -496,27 +636,43 @@ const styles = StyleSheet.create({
   photosGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: 12,
     marginBottom: 20,
   },
   photoItem: {
-    width: 100,
-    height: 75,
+    width: 130,
+    height: 95,
     borderRadius: RADIUS.md,
     overflow: 'hidden',
     position: 'relative',
+    borderWidth: 1,
+    borderColor: COLORS.border,
   },
   photoThumb: {
     width: '100%',
     height: '100%',
+  },
+  primaryBadge: {
+    position: 'absolute',
+    bottom: 4,
+    left: 4,
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: RADIUS.sm,
+  },
+  primaryBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 9,
+    fontWeight: '700',
   },
   removePhotoBtn: {
     position: 'absolute',
     top: 4,
     right: 4,
     backgroundColor: 'rgba(0,0,0,0.6)',
-    width: 20,
-    height: 20,
+    width: 22,
+    height: 22,
     borderRadius: RADIUS.full,
     alignItems: 'center',
     justifyContent: 'center',

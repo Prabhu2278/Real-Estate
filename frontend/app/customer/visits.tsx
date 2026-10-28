@@ -67,7 +67,7 @@ export default function CustomerVisitsScreen() {
     };
 
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
-      const confirmed = window.confirm('Are you sure you want to cancel this scheduled property visit?');
+      const confirmed = window.confirm('Are you sure you want to cancel this scheduled home tour?');
       if (confirmed) {
         await doCancel();
       }
@@ -75,12 +75,12 @@ export default function CustomerVisitsScreen() {
     }
 
     Alert.alert(
-      'Cancel Visit',
-      'Are you sure you want to cancel this scheduled property visit?',
+      'Cancel Tour',
+      'Are you sure you want to cancel this scheduled home tour?',
       [
         { text: 'No', style: 'cancel' },
         {
-          text: 'Yes, Cancel',
+          text: 'Yes, Cancel Tour',
           style: 'destructive',
           onPress: doCancel,
         },
@@ -95,20 +95,20 @@ export default function CustomerVisitsScreen() {
 
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>Scheduled Property Visits</Text>
+            <Text style={styles.title}>Booked Home Tours</Text>
             <Text style={styles.subtitle}>
-              Manage and track your in-person property walkthroughs and inspections.
+              Manage and track your in-person home walkthroughs and inspection appointments.
             </Text>
           </View>
 
           {loading ? (
-            <LoadingSpinner message="Loading your scheduled visits..." />
+            <LoadingSpinner message="Loading your booked tours..." />
           ) : visits.length === 0 ? (
             <EmptyState
               icon="calendar-outline"
-              title="No Scheduled Visits"
-              description="You have not requested any property visits yet. Go to any property details page and tap 'Schedule Visit' to book an inspection."
-              actionText="Browse Properties"
+              title="No Booked Tours"
+              description="You have not requested any home tours yet. Open any property listing and tap 'Book In-Person Tour' to schedule a walkthrough."
+              actionText="Browse Available Homes"
               onAction={() => router.push('/properties' as any)}
             />
           ) : (
@@ -161,7 +161,7 @@ export default function CustomerVisitsScreen() {
                     {/* Owner Response */}
                     {vst.owner_response && (
                       <View style={styles.responseBox}>
-                        <Text style={styles.responseLabel}>Owner Response:</Text>
+                        <Text style={styles.responseLabel}>Landlord Response:</Text>
                         <Text style={styles.responseText}>{vst.owner_response}</Text>
                       </View>
                     )}
@@ -173,7 +173,7 @@ export default function CustomerVisitsScreen() {
                           style={styles.viewPropBtn}
                           onPress={() => router.push(`/properties/${prop.id}` as any)}
                         >
-                          <Text style={styles.viewPropBtnText}>View Property</Text>
+                          <Text style={styles.viewPropBtnText}>View Home Details</Text>
                           <Ionicons name="arrow-forward" size={12} color={COLORS.primary} style={{ marginLeft: 4 }} />
                         </TouchableOpacity>
                       )}
@@ -184,7 +184,7 @@ export default function CustomerVisitsScreen() {
                           onPress={() => handleCancelVisit(vst.id)}
                         >
                           <Ionicons name="close-circle-outline" size={14} color={COLORS.danger} style={{ marginRight: 4 }} />
-                          <Text style={styles.cancelBtnText}>Cancel Visit</Text>
+                          <Text style={styles.cancelBtnText}>Cancel Tour</Text>
                         </TouchableOpacity>
                       )}
                     </View>

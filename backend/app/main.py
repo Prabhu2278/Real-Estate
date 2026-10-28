@@ -1,7 +1,9 @@
 import os
+import uuid
+import shutil
 import logging
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
@@ -87,6 +89,23 @@ def health_check():
     return {
         "status": "healthy",
         "service": "real-estate-backend"
+    }
+
+@app.post("/api/upload")
+async def upload_image(file: UploadFile = File(...)):
+    ext = os.path.splitext(file.filename or "")[1].lower()
+    if ext not in [".jpg", ".jpeg", ".png", ".webp", ".gif"]:
+        raise HTTPException(status_code=400, detail="Invalid image format. Allowed formats: JPG, PNG, WEBP, GIF.")
+    
+    unique_filename = f"{uuid.uuid4().hex}{ext}"
+    file_path = os.path.join(settings.UPLOAD_DIR, unique_filename)
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+        
+    return {
+        "url": f"http://127.0.0.1:8000/uploads/{unique_filename}",
+        "filename": unique_filename
     }
 
 @app.post("/api/seed")

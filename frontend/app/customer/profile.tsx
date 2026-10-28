@@ -122,9 +122,19 @@ export default function ProfileScreen() {
 
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>Account Profile & Settings</Text>
+            <Text style={styles.title}>
+              {user.role === 'admin'
+                ? 'Admin Account & Security'
+                : user.role === 'owner'
+                ? 'Landlord Account & Settings'
+                : 'Home Seeker Profile & Settings'}
+            </Text>
             <Text style={styles.subtitle}>
-              Manage your personal information, security, and notification preferences.
+              {user.role === 'admin'
+                ? 'Administrator credentials, system access, and security controls.'
+                : user.role === 'owner'
+                ? 'Manage your landlord contact info, verification details, and credentials.'
+                : 'Manage your tenant profile, contact information, and password security.'}
             </Text>
           </View>
 

@@ -59,20 +59,20 @@ export default function CustomerEnquiriesScreen() {
 
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>My Enquiries</Text>
+            <Text style={styles.title}>Landlord Conversations</Text>
             <Text style={styles.subtitle}>
-              Track messages and questions you have submitted to property owners.
+              Track direct messages and questions you have submitted to verified property landlords.
             </Text>
           </View>
 
           {loading ? (
-            <LoadingSpinner message="Loading your enquiries..." />
+            <LoadingSpinner message="Loading your conversations..." />
           ) : enquiries.length === 0 ? (
             <EmptyState
               icon="chatbubble-ellipses-outline"
-              title="No Enquiries Yet"
-              description="You haven't contacted any property owners yet. Click 'Contact Owner' on any property details page to start a conversation."
-              actionText="Browse Properties"
+              title="No Conversations Yet"
+              description="You haven't contacted any landlords yet. Click 'Ask Landlord a Question' on any property details page to start a conversation."
+              actionText="Browse Available Homes"
               onAction={() => router.push('/properties' as any)}
             />
           ) : (
@@ -101,7 +101,7 @@ export default function CustomerEnquiriesScreen() {
 
                     {/* Customer Message */}
                     <View style={styles.messageBox}>
-                      <Text style={styles.messageLabel}>Your Message:</Text>
+                      <Text style={styles.messageLabel}>Your Question:</Text>
                       <Text style={styles.messageText}>"{enq.message}"</Text>
                     </View>
 
@@ -110,14 +110,14 @@ export default function CustomerEnquiriesScreen() {
                       <View style={styles.replyBox}>
                         <View style={styles.replyHeader}>
                           <Ionicons name="chatbubbles" size={14} color={COLORS.secondary} style={{ marginRight: 6 }} />
-                          <Text style={styles.replyLabel}>Owner's Response:</Text>
+                          <Text style={styles.replyLabel}>Landlord Response:</Text>
                         </View>
                         <Text style={styles.replyText}>{enq.owner_reply}</Text>
                       </View>
                     ) : (
                       <View style={styles.pendingReplyBox}>
                         <Ionicons name="time-outline" size={14} color={COLORS.textMuted} style={{ marginRight: 6 }} />
-                        <Text style={styles.pendingReplyText}>Awaiting reply from owner</Text>
+                        <Text style={styles.pendingReplyText}>Awaiting response from landlord</Text>
                       </View>
                     )}
 
@@ -128,7 +128,7 @@ export default function CustomerEnquiriesScreen() {
                           style={styles.viewPropBtn}
                           onPress={() => router.push(`/properties/${prop.id}` as any)}
                         >
-                          <Text style={styles.viewPropBtnText}>View Property Details</Text>
+                          <Text style={styles.viewPropBtnText}>View Home Details</Text>
                           <Ionicons name="arrow-forward" size={12} color={COLORS.primary} style={{ marginLeft: 4 }} />
                         </TouchableOpacity>
                       </View>

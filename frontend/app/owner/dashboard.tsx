@@ -69,9 +69,11 @@ export default function OwnerDashboardScreen() {
           <View style={[styles.topHeader, isMobile && { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View>
               <Text style={styles.welcomeTitle}>
-                Welcome back, {user?.full_name?.split(' ')[0] || 'Ramesh'}!
+                Welcome back, {user?.full_name?.split(' ')[0] || 'Landlord'}!
               </Text>
-              <Text style={styles.welcomeSubtitle}>Here's your property overview.</Text>
+              <Text style={styles.welcomeSubtitle}>
+                Rental portfolio overview, tenant lead inquiries, and scheduled inspections.
+              </Text>
             </View>
 
             <TouchableOpacity
@@ -79,42 +81,42 @@ export default function OwnerDashboardScreen() {
               onPress={() => router.push('/owner/add-property' as any)}
             >
               <Ionicons name="add-circle" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
-              <Text style={styles.addPropertyBtnText}>Add Property</Text>
+              <Text style={styles.addPropertyBtnText}>+ List New Space</Text>
             </TouchableOpacity>
           </View>
 
           {loading ? (
-            <LoadingSpinner message="Loading owner metrics..." />
+            <LoadingSpinner message="Loading landlord portfolio metrics..." />
           ) : (
             <>
               {/* 5 Summary Stat Cards */}
               <View style={[styles.statsRow, isMobile && styles.statsRowMobile]}>
                 <StatCard
-                  title="Total Properties"
+                  title="Portfolio Size"
                   value={stats.total_properties}
                   icon="business"
                   color={COLORS.primary}
                 />
                 <StatCard
-                  title="Active Listings"
+                  title="Live on Market"
                   value={stats.active_listings}
                   icon="checkmark-circle"
                   color={COLORS.secondary}
                 />
                 <StatCard
-                  title="Pending Approval"
+                  title="In Verification"
                   value={stats.pending_approvals}
                   icon="time"
                   color={COLORS.accent}
                 />
                 <StatCard
-                  title="Total Enquiries"
+                  title="Tenant Leads"
                   value={stats.total_enquiries}
                   icon="chatbubble-ellipses"
                   color="#6366F1"
                 />
                 <StatCard
-                  title="Upcoming Visits"
+                  title="Inspection Bookings"
                   value={stats.upcoming_visits}
                   icon="calendar"
                   color="#EC4899"
@@ -124,15 +126,15 @@ export default function OwnerDashboardScreen() {
               {/* Recent Properties Section */}
               <View style={styles.cardBox}>
                 <View style={styles.cardBoxHeader}>
-                  <Text style={styles.cardBoxTitle}>Recent Properties</Text>
+                  <Text style={styles.cardBoxTitle}>Property Portfolio</Text>
                   <TouchableOpacity onPress={() => router.push('/owner/properties' as any)}>
-                    <Text style={styles.viewAllText}>View All Properties</Text>
+                    <Text style={styles.viewAllText}>View All Portfolio</Text>
                   </TouchableOpacity>
                 </View>
 
                 {dashboardData?.recent_properties.length === 0 ? (
                   <View style={styles.emptyContainer}>
-                    <Text style={styles.emptyText}>You haven't added any properties yet.</Text>
+                    <Text style={styles.emptyText}>You haven't added any properties to your portfolio yet.</Text>
                   </View>
                 ) : (
                   <View style={styles.propertiesTable}>
@@ -168,24 +170,24 @@ export default function OwnerDashboardScreen() {
                 {/* Recent Inquiries */}
                 <View style={styles.cardBox}>
                   <View style={styles.cardBoxHeader}>
-                    <Text style={styles.cardBoxTitle}>Customer Enquiries</Text>
+                    <Text style={styles.cardBoxTitle}>Tenant & Buyer Leads</Text>
                     <TouchableOpacity onPress={() => router.push('/owner/enquiries' as any)}>
                       <Text style={styles.viewAllText}>View all</Text>
                     </TouchableOpacity>
                   </View>
 
                   {dashboardData?.recent_enquiries.length === 0 ? (
-                    <Text style={styles.emptySubText}>No enquiries received yet.</Text>
+                    <Text style={styles.emptySubText}>No tenant leads received yet.</Text>
                   ) : (
                     dashboardData?.recent_enquiries.map((enq) => (
                       <View key={enq.id} style={styles.enquiryItem}>
                         <View style={styles.enquiryAvatar}>
                           <Text style={styles.enquiryAvatarText}>
-                            {enq.user?.full_name?.charAt(0) || 'C'}
+                            {enq.user?.full_name?.charAt(0) || 'L'}
                           </Text>
                         </View>
                         <View style={{ flex: 1 }}>
-                          <Text style={styles.enquiryUser}>{enq.user?.full_name || 'Customer'}</Text>
+                          <Text style={styles.enquiryUser}>{enq.user?.full_name || 'Prospective Tenant'}</Text>
                           <Text style={styles.enquiryMsg} numberOfLines={1}>
                             "{enq.message}"
                           </Text>
@@ -200,14 +202,14 @@ export default function OwnerDashboardScreen() {
                 {/* Upcoming Visits */}
                 <View style={styles.cardBox}>
                   <View style={styles.cardBoxHeader}>
-                    <Text style={styles.cardBoxTitle}>Upcoming Visits</Text>
+                    <Text style={styles.cardBoxTitle}>Inspection Bookings</Text>
                     <TouchableOpacity onPress={() => router.push('/owner/visits' as any)}>
                       <Text style={styles.viewAllText}>View all</Text>
                     </TouchableOpacity>
                   </View>
 
                   {dashboardData?.upcoming_visits.length === 0 ? (
-                    <Text style={styles.emptySubText}>No upcoming visit bookings.</Text>
+                    <Text style={styles.emptySubText}>No upcoming walkthrough bookings.</Text>
                   ) : (
                     dashboardData?.upcoming_visits.map((vst) => (
                       <View key={vst.id} style={styles.enquiryItem}>
@@ -215,7 +217,7 @@ export default function OwnerDashboardScreen() {
                           <Ionicons name="calendar" size={16} color={COLORS.secondary} />
                         </View>
                         <View style={{ flex: 1 }}>
-                          <Text style={styles.enquiryUser}>{vst.user?.full_name || 'Customer'}</Text>
+                          <Text style={styles.enquiryUser}>{vst.user?.full_name || 'Prospective Tenant'}</Text>
                           <Text style={styles.enquiryProp}>Slot: {vst.time_slot}</Text>
                           <Text style={styles.enquiryProp}>Property: {vst.property?.title}</Text>
                         </View>

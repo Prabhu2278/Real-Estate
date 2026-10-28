@@ -54,10 +54,10 @@ export default function AdminPropertiesScreen() {
   };
 
   const tabs = [
-    { label: 'All Listings', value: 'all' },
-    { label: 'Active', value: 'active' },
-    { label: 'Pending Review', value: 'pending' },
-    { label: 'Rejected', value: 'rejected' },
+    { label: 'All Units', value: 'all' },
+    { label: 'Live on Market', value: 'active' },
+    { label: 'In Verification', value: 'pending' },
+    { label: 'Action Required', value: 'rejected' },
   ];
 
   return (
@@ -67,9 +67,9 @@ export default function AdminPropertiesScreen() {
 
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>All Platform Properties</Text>
+            <Text style={styles.title}>Global Marketplace Inventory</Text>
             <Text style={styles.subtitle}>
-              Global overview of every listing submitted across all owners and agents.
+              Global overview and moderation directory of every property listing submitted on the platform.
             </Text>
           </View>
 

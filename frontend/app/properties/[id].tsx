@@ -299,7 +299,7 @@ export default function PropertyDetailScreen() {
             <View style={[styles.sideCol, isMobile && { width: '100%' }]}>
               {/* Contact Owner Card */}
               <View style={styles.ownerCard}>
-                <Text style={styles.cardHeading}>Contact Owner</Text>
+                <Text style={styles.cardHeading}>Landlord & Booking</Text>
                 <View style={styles.ownerProfileRow}>
                   <View style={styles.ownerAvatar}>
                     <Text style={styles.ownerAvatarText}>
@@ -308,7 +308,7 @@ export default function PropertyDetailScreen() {
                   </View>
                   <View>
                     <Text style={styles.ownerName}>{property.owner?.full_name || 'Rajneesh Kumar'}</Text>
-                    <Text style={styles.ownerRole}>Property Owner</Text>
+                    <Text style={styles.ownerRole}>Verified Landlord / Owner</Text>
                   </View>
                 </View>
 
@@ -316,10 +316,10 @@ export default function PropertyDetailScreen() {
                 <View style={styles.ownerButtonsRow}>
                   <TouchableOpacity
                     style={styles.callBtn}
-                    onPress={() => Alert.alert('Contact Owner', `Phone: ${property.owner?.phone || '+91 98765 43210'}`)}
+                    onPress={() => Alert.alert('Contact Landlord', `Phone: ${property.owner?.phone || '+91 98765 43210'}`)}
                   >
                     <Ionicons name="call" size={16} color={COLORS.primary} style={{ marginRight: 6 }} />
-                    <Text style={styles.callBtnText}>Call</Text>
+                    <Text style={styles.callBtnText}>Call Landlord</Text>
                   </TouchableOpacity>
 
                   <TouchableOpacity
@@ -327,7 +327,7 @@ export default function PropertyDetailScreen() {
                     onPress={() => setEnquiryModalOpen(true)}
                   >
                     <Ionicons name="chatbubble-ellipses" size={16} color={COLORS.text} style={{ marginRight: 6 }} />
-                    <Text style={styles.messageBtnText}>Message</Text>
+                    <Text style={styles.messageBtnText}>Ask Question</Text>
                   </TouchableOpacity>
                 </View>
 
@@ -337,7 +337,7 @@ export default function PropertyDetailScreen() {
                   onPress={() => setVisitModalOpen(true)}
                 >
                   <Ionicons name="calendar-outline" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
-                  <Text style={styles.scheduleVisitBtnText}>Schedule Visit</Text>
+                  <Text style={styles.scheduleVisitBtnText}>Book In-Person Tour</Text>
                 </TouchableOpacity>
               </View>
 
@@ -373,21 +373,21 @@ export default function PropertyDetailScreen() {
       <Modal
         visible={enquiryModalOpen}
         onClose={() => setEnquiryModalOpen(false)}
-        title="Send an Enquiry"
+        title="Ask Landlord a Question"
       >
         {enquirySuccess ? (
           <View style={styles.modalSuccessWrap}>
             <Ionicons name="checkmark-circle" size={48} color={COLORS.secondary} />
-            <Text style={styles.modalSuccessTitle}>Enquiry Sent!</Text>
+            <Text style={styles.modalSuccessTitle}>Question Sent!</Text>
             <Text style={styles.modalSuccessDesc}>
-              The owner has been notified and will reply shortly.
+              The landlord has been notified and will reply shortly.
             </Text>
           </View>
         ) : (
           <View>
             <Text style={styles.modalPropTitle}>{property.title}</Text>
             <Text style={styles.modalPropPrice}>{formatPrice(Number(property.price), property.listing_type)}</Text>
-            <Text style={styles.modalLabel}>Your Message</Text>
+            <Text style={styles.modalLabel}>Your Question</Text>
             <TextInput
               style={styles.modalTextarea}
               multiline
@@ -403,7 +403,7 @@ export default function PropertyDetailScreen() {
               disabled={enquirySubmitting}
             >
               <Text style={styles.modalSubmitBtnText}>
-                {enquirySubmitting ? 'Sending...' : 'Send Enquiry'}
+                {enquirySubmitting ? 'Sending...' : 'Send to Landlord'}
               </Text>
             </TouchableOpacity>
           </View>
@@ -414,14 +414,14 @@ export default function PropertyDetailScreen() {
       <Modal
         visible={visitModalOpen}
         onClose={() => setVisitModalOpen(false)}
-        title="Schedule Property Visit"
+        title="Book In-Person Home Tour"
       >
         {visitSuccess ? (
           <View style={styles.modalSuccessWrap}>
             <Ionicons name="checkmark-circle" size={48} color={COLORS.secondary} />
-            <Text style={styles.modalSuccessTitle}>Visit Requested!</Text>
+            <Text style={styles.modalSuccessTitle}>Tour Requested!</Text>
             <Text style={styles.modalSuccessDesc}>
-              Your visit request for {selectedSlot} has been sent to the owner for confirmation.
+              Your tour request for {selectedSlot} has been sent to the landlord for confirmation.
             </Text>
           </View>
         ) : (
@@ -483,7 +483,7 @@ export default function PropertyDetailScreen() {
               disabled={visitSubmitting}
             >
               <Text style={styles.modalSubmitBtnText}>
-                {visitSubmitting ? 'Booking Visit...' : 'Confirm Visit Request'}
+                {visitSubmitting ? 'Booking Tour...' : 'Confirm Tour Request'}
               </Text>
             </TouchableOpacity>
           </View>

@@ -76,9 +76,9 @@ export default function AdminUsersScreen() {
 
   const roleTabs = [
     { label: 'All Roles', value: 'all' },
-    { label: 'Customers', value: 'customer' },
-    { label: 'Owners', value: 'owner' },
-    { label: 'Admins', value: 'admin' },
+    { label: 'Home Seekers', value: 'customer' },
+    { label: 'Landlords & Owners', value: 'owner' },
+    { label: 'Administrators', value: 'admin' },
   ];
 
   return (
@@ -88,9 +88,9 @@ export default function AdminUsersScreen() {
 
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>Manage Registered Users</Text>
+            <Text style={styles.title}>User Directory & Account Audits</Text>
             <Text style={styles.subtitle}>
-              Monitor registered customers, property owners, and administrative staff accounts.
+              Monitor registered home seekers, verified property landlords, and administrative access.
             </Text>
           </View>
 

@@ -105,19 +105,19 @@ export default function AdminApprovalsScreen() {
 
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>Property Listing Approvals</Text>
+            <Text style={styles.title}>Listing Verification & Moderation Queue</Text>
             <Text style={styles.subtitle}>
-              Review newly submitted properties before making them publicly searchable on the marketplace.
+              Verify authenticity, compliance, and quality before publishing listings to the public marketplace.
             </Text>
           </View>
 
           {loading ? (
-            <LoadingSpinner message="Loading pending properties..." />
+            <LoadingSpinner message="Loading verification queue..." />
           ) : pendingProperties.length === 0 ? (
             <EmptyState
               icon="checkmark-done-circle-outline"
-              title="All Caught Up!"
-              description="There are currently no property submissions awaiting administrator review."
+              title="Verification Queue Clear"
+              description="There are currently no property submissions awaiting administrator compliance review."
             />
           ) : (
             <View style={styles.list}>
@@ -183,7 +183,7 @@ export default function AdminApprovalsScreen() {
                           disabled={actionLoading}
                         >
                           <Ionicons name="close-circle" size={16} color={COLORS.danger} style={{ marginRight: 4 }} />
-                          <Text style={styles.rejectBtnText}>Reject</Text>
+                          <Text style={styles.rejectBtnText}>Reject with Notice</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -192,7 +192,7 @@ export default function AdminApprovalsScreen() {
                           disabled={actionLoading}
                         >
                           <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
-                          <Text style={styles.approveBtnText}>Approve Listing</Text>
+                          <Text style={styles.approveBtnText}>Approve for Public Market</Text>
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -208,10 +208,10 @@ export default function AdminApprovalsScreen() {
       <Modal
         visible={rejectModalOpen}
         onClose={() => setRejectModalOpen(false)}
-        title="Reject Property Listing"
+        title="Issue Rejection Notice to Landlord"
       >
         <Text style={styles.modalSub}>
-          Provide a clear reason for rejecting "{selectedProperty?.title}". The owner will receive this feedback to make corrections.
+          Provide a compliance notice for rejecting "{selectedProperty?.title}". The landlord will receive this feedback to make corrections.
         </Text>
 
         <Text style={styles.modalLabel}>Rejection Reason *</Text>

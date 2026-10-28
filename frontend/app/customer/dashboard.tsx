@@ -75,10 +75,10 @@ export default function CustomerDashboardScreen() {
           {/* Top Greeting */}
           <View style={styles.topHeader}>
             <Text style={styles.welcomeTitle}>
-              Welcome back, {user?.full_name?.split(' ')[0] || 'Priya'}!
+              Welcome back, {user?.full_name?.split(' ')[0] || 'Home Seeker'}!
             </Text>
             <Text style={styles.welcomeSubtitle}>
-              Here's what's happening with your properties.
+              Keep track of your shortlisted homes, landlord conversations, and upcoming property tours.
             </Text>
           </View>
 
@@ -89,19 +89,19 @@ export default function CustomerDashboardScreen() {
               {/* Stat Cards Row */}
               <View style={[styles.statsRow, isMobile && styles.statsRowMobile]}>
                 <StatCard
-                  title="Saved Properties"
+                  title="Shortlisted Homes"
                   value={favorites.length}
                   icon="heart"
                   color={COLORS.danger}
                 />
                 <StatCard
-                  title="Enquiries"
+                  title="Landlord Chats"
                   value={enquiries.length}
                   icon="chatbubble-ellipses"
                   color={COLORS.primary}
                 />
                 <StatCard
-                  title="Upcoming Visits"
+                  title="Booked Home Tours"
                   value={visits.filter((v) => v.status !== 'cancelled').length}
                   icon="calendar"
                   color={COLORS.secondary}
@@ -110,7 +110,7 @@ export default function CustomerDashboardScreen() {
 
               {/* Saved Properties Section */}
               <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>Saved Properties</Text>
+                <Text style={styles.sectionTitle}>Shortlisted Homes</Text>
                 <TouchableOpacity
                   style={styles.viewAllBtn}
                   onPress={() => router.push('/customer/favorites' as any)}
@@ -122,12 +122,12 @@ export default function CustomerDashboardScreen() {
 
               {savedProperties.length === 0 ? (
                 <View style={styles.emptyBox}>
-                  <Text style={styles.emptyText}>You haven't saved any favorite properties yet.</Text>
+                  <Text style={styles.emptyText}>You haven't bookmarked any homes yet.</Text>
                   <TouchableOpacity
                     style={styles.exploreBtn}
                     onPress={() => router.push('/properties' as any)}
                   >
-                    <Text style={styles.exploreBtnText}>Browse Properties</Text>
+                    <Text style={styles.exploreBtnText}>Browse Available Homes</Text>
                   </TouchableOpacity>
                 </View>
               ) : (
@@ -151,14 +151,14 @@ export default function CustomerDashboardScreen() {
                 {/* Recent Enquiries Box */}
                 <View style={styles.cardBox}>
                   <View style={styles.cardBoxHeader}>
-                    <Text style={styles.cardBoxTitle}>Recent Enquiries</Text>
+                    <Text style={styles.cardBoxTitle}>Recent Landlord Chats</Text>
                     <TouchableOpacity onPress={() => router.push('/customer/enquiries' as any)}>
                       <Text style={styles.viewAllText}>View all</Text>
                     </TouchableOpacity>
                   </View>
 
                   {enquiries.length === 0 ? (
-                    <Text style={styles.emptySubText}>No enquiries submitted yet.</Text>
+                    <Text style={styles.emptySubText}>No landlord conversations initiated yet.</Text>
                   ) : (
                     enquiries.slice(0, 3).map((enq) => (
                       <View key={enq.id} style={styles.activityItem}>
@@ -174,7 +174,7 @@ export default function CustomerDashboardScreen() {
                           </Text>
                           {enq.owner_reply && (
                             <Text style={styles.replyMsg} numberOfLines={1}>
-                              Owner reply: {enq.owner_reply}
+                              Landlord reply: {enq.owner_reply}
                             </Text>
                           )}
                         </View>
@@ -186,14 +186,14 @@ export default function CustomerDashboardScreen() {
                 {/* Upcoming Visits Box */}
                 <View style={styles.cardBox}>
                   <View style={styles.cardBoxHeader}>
-                    <Text style={styles.cardBoxTitle}>Upcoming Visits</Text>
+                    <Text style={styles.cardBoxTitle}>Booked Home Tours</Text>
                     <TouchableOpacity onPress={() => router.push('/customer/visits' as any)}>
                       <Text style={styles.viewAllText}>View all</Text>
                     </TouchableOpacity>
                   </View>
 
                   {visits.length === 0 ? (
-                    <Text style={styles.emptySubText}>No property visits scheduled yet.</Text>
+                    <Text style={styles.emptySubText}>No home walkthrough tours scheduled yet.</Text>
                   ) : (
                     visits.slice(0, 3).map((vst) => (
                       <View key={vst.id} style={styles.activityItem}>
@@ -205,7 +205,7 @@ export default function CustomerDashboardScreen() {
                             {vst.property?.title || `Property #${vst.property_id}`}
                           </Text>
                           <Text style={styles.activityMeta}>
-                            Time: {vst.time_slot} · Status: {vst.status}
+                            Tour time: {vst.time_slot} · Status: {vst.status}
                           </Text>
                         </View>
                       </View>

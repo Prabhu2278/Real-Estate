@@ -33,29 +33,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ role = 'customer' }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const getCustomerNav = (): NavItem[] => [
-    { label: 'Dashboard', path: '/customer/dashboard', icon: 'grid-outline' },
-    { label: 'Saved Properties', path: '/customer/favorites', icon: 'heart-outline' },
-    { label: 'My Enquiries', path: '/customer/enquiries', icon: 'chatbubble-ellipses-outline' },
-    { label: 'Scheduled Visits', path: '/customer/visits', icon: 'calendar-outline' },
-    { label: 'Profile', path: '/customer/profile', icon: 'person-outline' },
+    { label: 'My Home Hub', path: '/customer/dashboard', icon: 'grid-outline' },
+    { label: 'Shortlisted Homes', path: '/customer/favorites', icon: 'heart-outline' },
+    { label: 'Landlord Chats', path: '/customer/enquiries', icon: 'chatbubble-ellipses-outline' },
+    { label: 'Booked Home Tours', path: '/customer/visits', icon: 'calendar-outline' },
+    { label: 'Account & Security', path: '/customer/profile', icon: 'person-outline' },
   ];
 
   const getOwnerNav = (): NavItem[] => [
-    { label: 'Dashboard', path: '/owner/dashboard', icon: 'grid-outline' },
-    { label: 'My Properties', path: '/owner/properties', icon: 'home-outline' },
-    { label: 'Add Property', path: '/owner/add-property', icon: 'add-circle-outline' },
-    { label: 'Enquiries', path: '/owner/enquiries', icon: 'chatbubble-ellipses-outline' },
-    { label: 'Visits', path: '/owner/visits', icon: 'calendar-outline' },
-    { label: 'Profile', path: '/customer/profile', icon: 'person-outline' },
+    { label: 'Landlord Dashboard', path: '/owner/dashboard', icon: 'grid-outline' },
+    { label: 'Property Portfolio', path: '/owner/properties', icon: 'home-outline' },
+    { label: '+ List New Space', path: '/owner/add-property', icon: 'add-circle-outline' },
+    { label: 'Tenant & Buyer Leads', path: '/owner/enquiries', icon: 'chatbubble-ellipses-outline' },
+    { label: 'Inspection Bookings', path: '/owner/visits', icon: 'calendar-outline' },
+    { label: 'Account & Security', path: '/customer/profile', icon: 'person-outline' },
   ];
 
   const getAdminNav = (): NavItem[] => [
-    { label: 'Dashboard', path: '/admin/dashboard', icon: 'grid-outline' },
-    { label: 'Manage Users', path: '/admin/users', icon: 'people-outline' },
-    { label: 'Properties', path: '/admin/properties', icon: 'business-outline' },
-    { label: 'Pending Approvals', path: '/admin/approvals', icon: 'checkmark-circle-outline' },
-    { label: 'Reports', path: '/admin/reports', icon: 'bar-chart-outline' },
-    { label: 'Profile', path: '/customer/profile', icon: 'person-outline' },
+    { label: 'Command Center', path: '/admin/dashboard', icon: 'grid-outline' },
+    { label: 'User Directory & Audits', path: '/admin/users', icon: 'people-outline' },
+    { label: 'Global Inventory', path: '/admin/properties', icon: 'business-outline' },
+    { label: 'Verification Queue', path: '/admin/approvals', icon: 'checkmark-circle-outline' },
+    { label: 'Marketplace Analytics', path: '/admin/reports', icon: 'bar-chart-outline' },
+    { label: 'Admin Account', path: '/customer/profile', icon: 'person-outline' },
   ];
 
   const items = role === 'admin' ? getAdminNav() : role === 'owner' ? getOwnerNav() : getCustomerNav();

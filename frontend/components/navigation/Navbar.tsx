@@ -79,7 +79,7 @@ export const Navbar: React.FC = () => {
                 >
                   <Ionicons name="grid-outline" size={16} color={COLORS.primary} style={{ marginRight: 6 }} />
                   <Text style={styles.dashboardBtnText}>
-                    {user.role === 'admin' ? 'Admin Portal' : user.role === 'owner' ? 'Owner Portal' : 'My Dashboard'}
+                    {user.role === 'admin' ? 'Command Center' : user.role === 'owner' ? 'Landlord Dashboard' : 'My Home Hub'}
                   </Text>
                 </TouchableOpacity>
 
@@ -168,7 +168,7 @@ export const Navbar: React.FC = () => {
                     >
                       <Ionicons name="grid-outline" size={18} color={COLORS.primary} style={{ marginRight: 8 }} />
                       <Text style={[styles.mobileLinkText, { color: COLORS.primary, fontWeight: '600' }]}>
-                        Go to Dashboard ({user.role})
+                        {user.role === 'admin' ? 'Command Center' : user.role === 'owner' ? 'Landlord Dashboard' : 'My Home Hub'}
                       </Text>
                     </TouchableOpacity>
                     <TouchableOpacity

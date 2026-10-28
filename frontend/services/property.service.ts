@@ -26,4 +26,13 @@ export const propertyService = {
     const res = await api.delete<{ message: string }>(`/properties/${id}`);
     return res.data;
   },
+
+  uploadImage: async (file: File | Blob): Promise<{ url: string; filename: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await api.post<{ url: string; filename: string }>('/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return res.data;
+  },
 };

@@ -61,9 +61,9 @@ export default function AdminReportsScreen() {
 
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>Platform Analytics & Reports</Text>
+            <Text style={styles.title}>Marketplace Health & Audit Analytics</Text>
             <Text style={styles.subtitle}>
-              Detailed metrics on user acquisition, listing volume, and customer inquiries.
+              Detailed platform performance metrics across user acquisitions, active listings, tenant demand, and inspections.
             </Text>
           </View>
 
@@ -74,25 +74,25 @@ export default function AdminReportsScreen() {
               {/* Stat Cards */}
               <View style={[styles.statsRow, isMobile && styles.statsRowMobile]}>
                 <StatCard
-                  title="Platform Users"
+                  title="Registered Accounts"
                   value={stats.total_users}
                   icon="people"
                   color={COLORS.primary}
                 />
                 <StatCard
-                  title="Total Properties"
+                  title="Marketplace Inventory"
                   value={stats.total_properties}
                   icon="business"
                   color={COLORS.secondary}
                 />
                 <StatCard
-                  title="Customer Enquiries"
+                  title="Tenant & Buyer Inquiries"
                   value={stats.total_enquiries}
                   icon="chatbubble-ellipses"
                   color="#6366F1"
                 />
                 <StatCard
-                  title="Visit Requests"
+                  title="Inspection Bookings"
                   value={stats.total_visits}
                   icon="calendar"
                   color="#EC4899"

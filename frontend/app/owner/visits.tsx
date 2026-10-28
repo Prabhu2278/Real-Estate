@@ -100,19 +100,19 @@ export default function OwnerVisitsScreen() {
 
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>Visit Scheduling Requests</Text>
+            <Text style={styles.title}>Walkthrough & Inspection Bookings</Text>
             <Text style={styles.subtitle}>
-              Review, confirm, and coordinate scheduled walkthroughs for your properties.
+              Review, confirm, and coordinate scheduled walkthroughs and inspections with prospective tenants.
             </Text>
           </View>
 
           {loading ? (
-            <LoadingSpinner message="Loading visit bookings..." />
+            <LoadingSpinner message="Loading inspection bookings..." />
           ) : visits.length === 0 ? (
             <EmptyState
               icon="calendar-outline"
-              title="No Visits Requested"
-              description="No customers have requested property visits yet."
+              title="No Inspection Bookings"
+              description="No prospective renters or buyers have requested property walkthroughs yet."
             />
           ) : (
             <View style={styles.list}>
@@ -124,7 +124,7 @@ export default function OwnerVisitsScreen() {
                         {vst.property?.title || `Property ID #${vst.property_id}`}
                       </Text>
                       <Text style={styles.locText}>
-                        Customer: {vst.user?.full_name} ({vst.user?.phone || vst.user?.email})
+                        Lead: {vst.user?.full_name} ({vst.user?.phone || vst.user?.email})
                       </Text>
                     </View>
                     <StatusBadge status={vst.status} />
@@ -144,7 +144,7 @@ export default function OwnerVisitsScreen() {
 
                   {vst.customer_message && (
                     <View style={styles.msgBox}>
-                      <Text style={styles.msgLabel}>Customer Message:</Text>
+                      <Text style={styles.msgLabel}>Tenant Note:</Text>
                       <Text style={styles.msgText}>"{vst.customer_message}"</Text>
                     </View>
                   )}
@@ -164,7 +164,7 @@ export default function OwnerVisitsScreen() {
                         onPress={() => openActionModal(vst, 'confirmed')}
                       >
                         <Ionicons name="checkmark-circle" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
-                        <Text style={styles.confirmBtnText}>Confirm Visit</Text>
+                        <Text style={styles.confirmBtnText}>Confirm Appointment</Text>
                       </TouchableOpacity>
 
                       <TouchableOpacity
@@ -172,7 +172,7 @@ export default function OwnerVisitsScreen() {
                         onPress={() => openActionModal(vst, 'rejected')}
                       >
                         <Ionicons name="close-circle" size={16} color={COLORS.danger} style={{ marginRight: 6 }} />
-                        <Text style={styles.rejectBtnText}>Decline</Text>
+                        <Text style={styles.rejectBtnText}>Decline Request</Text>
                       </TouchableOpacity>
                     </View>
                   )}
@@ -187,13 +187,13 @@ export default function OwnerVisitsScreen() {
       <Modal
         visible={modalOpen}
         onClose={() => setModalOpen(false)}
-        title={targetStatus === 'confirmed' ? 'Confirm Property Visit' : 'Decline Property Visit'}
+        title={targetStatus === 'confirmed' ? 'Confirm Walkthrough Tour' : 'Decline Tour Request'}
       >
         <Text style={styles.modalSub}>
-          Visit requested by {activeVisit?.user?.full_name} for {activeVisit?.time_slot}.
+          Tour requested by {activeVisit?.user?.full_name} for {activeVisit?.time_slot}.
         </Text>
 
-        <Text style={styles.modalLabel}>Message to Customer</Text>
+        <Text style={styles.modalLabel}>Message to Renter / Buyer</Text>
         <TextInput
           style={styles.modalInput}
           multiline

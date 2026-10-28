@@ -71,21 +71,21 @@ export default function CustomerFavoritesScreen() {
           {/* Header */}
           <View style={styles.header}>
             <View>
-              <Text style={styles.title}>My Saved Properties</Text>
+              <Text style={styles.title}>My Shortlisted Homes</Text>
               <Text style={styles.subtitle}>
-                Properties you have bookmarked for quick review or visits.
+                Homes you have bookmarked for comparison and booking walkthrough tours.
               </Text>
             </View>
           </View>
 
           {loading ? (
-            <LoadingSpinner message="Loading your saved properties..." />
+            <LoadingSpinner message="Loading your shortlisted homes..." />
           ) : favorites.length === 0 ? (
             <EmptyState
               icon="heart-outline"
-              title="No Saved Properties"
-              description="You haven't added any properties to your favorites yet. Tap the heart icon on any listing to save it here."
-              actionText="Explore Properties"
+              title="No Shortlisted Homes"
+              description="You haven't bookmarked any homes yet. Tap the heart icon on any listing to save it here for easy review."
+              actionText="Explore Homes"
               onAction={() => router.push('/properties' as any)}
             />
           ) : (

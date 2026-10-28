@@ -71,9 +71,9 @@ export default function AdminDashboardScreen() {
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={[styles.header, isMobile && { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View>
-              <Text style={styles.title}>Admin Dashboard</Text>
+              <Text style={styles.title}>Marketplace Command Center</Text>
               <Text style={styles.subtitle}>
-                System management, property reviews, and platform oversight.
+                Platform-wide oversight, listing compliance, and user account management.
               </Text>
             </View>
 
@@ -83,38 +83,38 @@ export default function AdminDashboardScreen() {
             >
               <Ionicons name="shield-checkmark" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
               <Text style={styles.reviewPendingBtnText}>
-                Review Pending ({stats.pending_approvals})
+                Verification Queue ({stats.pending_approvals})
               </Text>
             </TouchableOpacity>
           </View>
 
           {loading ? (
-            <LoadingSpinner message="Loading platform overview..." />
+            <LoadingSpinner message="Loading platform command center..." />
           ) : (
             <>
               {/* Stat Cards Overview */}
-              <Text style={styles.sectionHeading}>Platform Overview</Text>
+              <Text style={styles.sectionHeading}>Platform Governance & Metrics</Text>
               <View style={[styles.statsRow, isMobile && styles.statsRowMobile]}>
                 <StatCard
-                  title="Total Users"
+                  title="Total Accounts"
                   value={stats.total_users}
                   icon="people"
                   color={COLORS.primary}
                 />
                 <StatCard
-                  title="Total Properties"
+                  title="Marketplace Inventory"
                   value={stats.total_properties}
                   icon="business"
                   color={COLORS.secondary}
                 />
                 <StatCard
-                  title="Pending Approvals"
+                  title="Moderation Queue"
                   value={stats.pending_approvals}
                   icon="time"
                   color={COLORS.accent}
                 />
                 <StatCard
-                  title="Total Enquiries"
+                  title="Platform Leads"
                   value={stats.total_enquiries}
                   icon="chatbubble-ellipses"
                   color="#6366F1"
@@ -124,9 +124,9 @@ export default function AdminDashboardScreen() {
               {/* Recent Listings Awaiting Review or Newly Added */}
               <View style={styles.cardBox}>
                 <View style={styles.cardBoxHeader}>
-                  <Text style={styles.cardBoxTitle}>Recent Listings</Text>
+                  <Text style={styles.cardBoxTitle}>Recent Listings for Moderation</Text>
                   <TouchableOpacity onPress={() => router.push('/admin/approvals' as any)}>
-                    <Text style={styles.viewAllText}>Manage Approvals</Text>
+                    <Text style={styles.viewAllText}>Open Verification Queue</Text>
                   </TouchableOpacity>
                 </View>
 

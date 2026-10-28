@@ -94,10 +94,10 @@ export default function OwnerPropertiesScreen() {
   };
 
   const filterTabs = [
-    { label: 'All', value: 'all' },
-    { label: 'Active', value: 'active' },
-    { label: 'Pending Review', value: 'pending' },
-    { label: 'Rejected', value: 'rejected' },
+    { label: 'All Units', value: 'all' },
+    { label: 'Live on Market', value: 'active' },
+    { label: 'In Verification', value: 'pending' },
+    { label: 'Action Required', value: 'rejected' },
   ];
 
   return (
@@ -108,9 +108,9 @@ export default function OwnerPropertiesScreen() {
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={[styles.header, isMobile && { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View>
-              <Text style={styles.title}>My Listed Properties</Text>
+              <Text style={styles.title}>Property Portfolio</Text>
               <Text style={styles.subtitle}>
-                Manage your active real estate listings, approvals, and availability.
+                Manage your real estate assets, listing approvals, and tenancy status.
               </Text>
             </View>
 
@@ -119,7 +119,7 @@ export default function OwnerPropertiesScreen() {
               onPress={() => router.push('/owner/add-property' as any)}
             >
               <Ionicons name="add-circle" size={18} color="#FFFFFF" style={{ marginRight: 6 }} />
-              <Text style={styles.addBtnText}>Add Property</Text>
+              <Text style={styles.addBtnText}>+ List New Space</Text>
             </TouchableOpacity>
           </View>
 
@@ -142,13 +142,13 @@ export default function OwnerPropertiesScreen() {
           </View>
 
           {loading ? (
-            <LoadingSpinner message="Loading your properties..." />
+            <LoadingSpinner message="Loading your portfolio..." />
           ) : properties.length === 0 ? (
             <EmptyState
               icon="business-outline"
-              title="No Properties Found"
+              title="No Portfolio Units Found"
               description="You do not have any properties matching this filter. Submit a new property listing to begin."
-              actionText="Add New Property"
+              actionText="+ List New Space"
               onAction={() => router.push('/owner/add-property' as any)}
             />
           ) : (
@@ -205,7 +205,7 @@ export default function OwnerPropertiesScreen() {
                           onPress={() => router.push(`/properties/${prop.id}` as any)}
                         >
                           <Ionicons name="eye-outline" size={14} color={COLORS.primary} style={{ marginRight: 4 }} />
-                          <Text style={styles.actionBtnOutlineText}>View</Text>
+                          <Text style={styles.actionBtnOutlineText}>Preview</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -213,7 +213,7 @@ export default function OwnerPropertiesScreen() {
                           onPress={() => router.push(`/owner/edit-property?id=${prop.id}` as any)}
                         >
                           <Ionicons name="create-outline" size={14} color={COLORS.text} style={{ marginRight: 4 }} />
-                          <Text style={[styles.actionBtnOutlineText, { color: COLORS.text }]}>Edit</Text>
+                          <Text style={[styles.actionBtnOutlineText, { color: COLORS.text }]}>Edit Details</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
@@ -222,7 +222,7 @@ export default function OwnerPropertiesScreen() {
                         >
                           <Ionicons name="swap-horizontal-outline" size={14} color={COLORS.secondary} style={{ marginRight: 4 }} />
                           <Text style={[styles.actionBtnOutlineText, { color: COLORS.secondary }]}>
-                            {prop.availability_status === 'available' ? 'Mark Rented/Sold' : 'Mark Available'}
+                            {prop.availability_status === 'available' ? 'Mark Leased / Sold' : 'Mark Vacant'}
                           </Text>
                         </TouchableOpacity>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,10 +10,12 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Sidebar } from '../../components/navigation/Sidebar';
+import { Modal } from '../../components/common/Modal';
 import { COLORS, RADIUS, SHADOWS, SPACING } from '../../constants/theme';
 import { PROPERTY_TYPES, FURNISHING_OPTIONS } from '../../constants/config';
 import { propertyService } from '../../services/property.service';
@@ -32,10 +34,14 @@ export default function AddPropertyScreen() {
     }
   }, [isAuthenticated, isLoading]);
 
+  const scrollViewRef = useRef<any>(null);
+
   // Step: 1 | 2 | 3 | 4
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [confirmModalOpen, setConfirmModalOpen] = useState<boolean>(false);
+  const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
 
 
   // Form Fields
@@ -96,6 +102,39 @@ export default function AddPropertyScreen() {
     setImageUrlInput('');
   };
 
+  const [uploadingImage, setUploadingImage] = useState<boolean>(false);
+
+  const samplePhotos = [
+    { label: '🏢 Exterior', url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🛋️ Living Room', url: 'https://images.unsplash.com/photo-1600566753376-12c8ab7fb75b?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🛏️ Bedroom', url: 'https://images.unsplash.com/photo-1595526114035-0d45ed16cfbf?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🍳 Kitchen', url: 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🌅 Balcony View', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1000&auto=format&fit=crop&q=80' },
+    { label: '🚿 Bathroom', url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=1000&auto=format&fit=crop&q=80' },
+  ];
+
+  const handlePickFile = () => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = async (e: any) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+          setUploadingImage(true);
+          const data = await propertyService.uploadImage(file);
+          setImages((prev) => [...prev, data.url]);
+        } catch (err: any) {
+          setErrorMessage(getApiErrorMessage(err, 'Failed to upload image.'));
+        } finally {
+          setUploadingImage(false);
+        }
+      };
+      input.click();
+    }
+  };
+
   const handleRemoveImage = (index: number) => {
     setImages(images.filter((_, i) => i !== index));
   };
@@ -126,12 +165,17 @@ export default function AddPropertyScreen() {
     setCurrentStep((prev) => Math.max(1, prev - 1));
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (images.length === 0) {
       setErrorMessage('Please add at least one property photograph.');
       return;
     }
+    setErrorMessage(null);
+    setConfirmModalOpen(true);
+  };
 
+  const handleConfirmSubmit = async () => {
+    setConfirmModalOpen(false);
     try {
       setLoading(true);
       setErrorMessage(null);
@@ -155,21 +199,42 @@ export default function AddPropertyScreen() {
         image_urls: images,
       });
 
-      Alert.alert(
-        'Success',
-        'Your property has been submitted! It is currently pending review and will be publicly active once approved by an administrator.',
-        [
-          {
-            text: 'View My Properties',
-            onPress: () => router.replace('/owner/properties' as any),
-          },
-        ]
-      );
+      // Show success popup
+      setSuccessModalOpen(true);
     } catch (err: any) {
       setErrorMessage(getApiErrorMessage(err, 'Failed to submit property.'));
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSuccessOk = () => {
+    setSuccessModalOpen(false);
+    // Refresh & reset form fields back to initial state, returning to Step 1 (Basic Info)
+    setTitle('');
+    setDescription('');
+    setPropertyType('Apartment');
+    setListingType('rent');
+    setPrice('');
+    setBedrooms('2');
+    setBathrooms('2');
+    setAreaSqft('1100');
+    setFurnishingStatus('Semi-furnished');
+    setFloorNumber('2');
+    setTotalFloors('6');
+    setAddress('');
+    setCity('Chennai');
+    setState('Tamil Nadu');
+    setPostalCode('600042');
+    setSelectedAmenities(['Parking', 'Security', 'Lift', 'Power Backup']);
+    setImageUrlInput('');
+    setImages([
+      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1000&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=1000&auto=format&fit=crop&q=80',
+    ]);
+    setErrorMessage(null);
+    setCurrentStep(1);
+    scrollViewRef.current?.scrollTo?.({ y: 0, animated: true });
   };
 
   const steps = [
@@ -184,11 +249,11 @@ export default function AddPropertyScreen() {
       <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
         <Sidebar role="owner" />
 
-        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
+        <ScrollView ref={scrollViewRef} style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>Add New Property</Text>
+            <Text style={styles.title}>List New Property</Text>
             <Text style={styles.subtitle}>
-              List your residential or commercial property on RealEstate platform.
+              Publish your residential or commercial space to verified home seekers.
             </Text>
           </View>
 
@@ -503,6 +568,44 @@ export default function AddPropertyScreen() {
                 Upload authentic, clear photos of the property. The first photo will be used as the primary display image.
               </Text>
 
+              {/* Upload from Device / Computer Button */}
+              <TouchableOpacity
+                style={styles.uploadDeviceBtn}
+                onPress={handlePickFile}
+                disabled={uploadingImage}
+                activeOpacity={0.8}
+              >
+                {uploadingImage ? (
+                  <ActivityIndicator color={COLORS.primary} size="small" style={{ marginRight: 8 }} />
+                ) : (
+                  <Ionicons name="cloud-upload-outline" size={20} color={COLORS.primary} style={{ marginRight: 8 }} />
+                )}
+                <Text style={styles.uploadDeviceBtnText}>
+                  {uploadingImage ? 'Uploading Image...' : 'Upload Photo from Device / Computer'}
+                </Text>
+              </TouchableOpacity>
+
+              {/* Quick-Add Sample Photos */}
+              <Text style={styles.photoSectionSubtitle}>Or 1-click add realistic sample photos:</Text>
+              <View style={styles.samplePhotosRow}>
+                {samplePhotos.map((s) => (
+                  <TouchableOpacity
+                    key={s.label}
+                    style={styles.samplePhotoChip}
+                    onPress={() => {
+                      if (!images.includes(s.url)) {
+                        setImages((prev) => [...prev, s.url]);
+                      }
+                    }}
+                    activeOpacity={0.8}
+                  >
+                    <Text style={styles.samplePhotoChipText}>{s.label}</Text>
+                    <Ionicons name="add-circle" size={14} color={COLORS.primary} style={{ marginLeft: 4 }} />
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <Text style={[styles.photoSectionSubtitle, { marginTop: 16 }]}>Or paste an image URL:</Text>
               {/* Add Image URL Row */}
               <View style={styles.addImageRow}>
                 <TextInput
@@ -513,7 +616,7 @@ export default function AddPropertyScreen() {
                 />
                 <TouchableOpacity style={styles.addImageBtn} onPress={handleAddImage}>
                   <Ionicons name="add" size={18} color="#FFFFFF" style={{ marginRight: 4 }} />
-                  <Text style={styles.addImageBtnText}>Add Photo</Text>
+                  <Text style={styles.addImageBtnText}>Add</Text>
                 </TouchableOpacity>
               </View>
 
@@ -574,6 +677,73 @@ export default function AddPropertyScreen() {
           </View>
         </ScrollView>
       </View>
+
+      {/* SUBMIT CONFIRMATION MODAL */}
+      <Modal
+        visible={confirmModalOpen}
+        onClose={() => !loading && setConfirmModalOpen(false)}
+        title="Submit Property"
+        maxWidth={460}
+      >
+        <View style={styles.modalContent}>
+          <View style={[styles.modalIconWrap, { backgroundColor: '#EEF2FF' }]}>
+            <Ionicons name="help-circle-outline" size={38} color={COLORS.primary} />
+          </View>
+          <Text style={styles.modalTitle}>Confirm Property Submission</Text>
+          <Text style={styles.modalDesc}>
+            Are you sure you want to submit "{title || 'this property'}" for administrator review?
+          </Text>
+
+          <View style={styles.modalButtonsRow}>
+            <TouchableOpacity
+              style={styles.cancelModalBtn}
+              onPress={() => setConfirmModalOpen(false)}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.cancelModalBtnText}>No, Cancel</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.confirmModalBtn}
+              onPress={handleConfirmSubmit}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="checkmark-done" size={16} color="#FFFFFF" style={{ marginRight: 6 }} />
+              <Text style={styles.confirmModalBtnText}>Yes, Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* SUCCESS POPUP MODAL */}
+      <Modal
+        visible={successModalOpen}
+        onClose={handleSuccessOk}
+        title="Property Submitted"
+        maxWidth={460}
+      >
+        <View style={styles.modalContent}>
+          <View style={[styles.modalIconWrap, { backgroundColor: '#ECFDF5' }]}>
+            <Ionicons name="checkmark-circle" size={44} color={COLORS.secondary} />
+          </View>
+          <Text style={styles.modalTitle}>Property Added Successfully!</Text>
+          <Text style={styles.modalDesc}>
+            Your property has been submitted and is currently pending review. It will become publicly visible once approved by an administrator.
+          </Text>
+
+          <View style={styles.modalButtonsRow}>
+            <TouchableOpacity
+              style={[styles.confirmModalBtn, { flex: 1, backgroundColor: COLORS.secondary }]}
+              onPress={handleSuccessOk}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.confirmModalBtnText}>OK</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -906,6 +1076,115 @@ const styles = StyleSheet.create({
     borderRadius: RADIUS.md,
   },
   nextBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  uploadDeviceBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: RADIUS.md,
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: COLORS.primary,
+    backgroundColor: '#EFF6FF',
+    marginBottom: 16,
+  },
+  uploadDeviceBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.primary,
+  },
+  photoSectionSubtitle: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: COLORS.textMuted,
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  samplePhotosRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16,
+  },
+  samplePhotoChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: RADIUS.full,
+  },
+  samplePhotoChipText: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: COLORS.text,
+  },
+  modalContent: {
+    alignItems: 'center',
+    paddingVertical: SPACING.sm,
+  },
+  modalIconWrap: {
+    width: 68,
+    height: 68,
+    borderRadius: RADIUS.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: SPACING.md,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  modalDesc: {
+    fontSize: 14,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: SPACING.xl,
+  },
+  modalButtonsRow: {
+    flexDirection: 'row',
+    gap: 12,
+    width: '100%',
+  },
+  cancelModalBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  cancelModalBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.text,
+  },
+  confirmModalBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  confirmModalBtnText: {
     fontSize: 14,
     fontWeight: '700',
     color: '#FFFFFF',

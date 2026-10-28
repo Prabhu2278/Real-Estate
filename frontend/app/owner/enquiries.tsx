@@ -90,19 +90,19 @@ export default function OwnerEnquiriesScreen() {
 
         <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
-            <Text style={styles.title}>Property Enquiries Inbox</Text>
+            <Text style={styles.title}>Tenant & Buyer Leads Inbox</Text>
             <Text style={styles.subtitle}>
-              Review inquiries from prospective tenants and buyers for your listings.
+              Review inquiries and direct communications from prospective tenants and qualified buyers.
             </Text>
           </View>
 
           {loading ? (
-            <LoadingSpinner message="Loading customer enquiries..." />
+            <LoadingSpinner message="Loading prospective tenant leads..." />
           ) : enquiries.length === 0 ? (
             <EmptyState
               icon="mail-outline"
-              title="No Inquiries Yet"
-              description="You have not received any customer enquiries for your properties yet."
+              title="No Leads Yet"
+              description="You have not received any tenant inquiries for your portfolio properties yet."
             />
           ) : (
             <View style={styles.list}>
@@ -111,17 +111,17 @@ export default function OwnerEnquiriesScreen() {
                   <View style={[styles.cardHeader, isMobile && { flexDirection: 'column', alignItems: 'flex-start', gap: 8 }]}>
                     <View>
                       <Text style={styles.propTitle}>
-                        Property: {enq.property?.title || `#${enq.property_id}`}
+                        Listing: {enq.property?.title || `#${enq.property_id}`}
                       </Text>
                       <Text style={styles.senderText}>
-                        From: {enq.user?.full_name} ({enq.user?.email}) · {formatDate(enq.created_at)}
+                        Lead: {enq.user?.full_name} ({enq.user?.email}) · {formatDate(enq.created_at)}
                       </Text>
                     </View>
                     <StatusBadge status={enq.status} />
                   </View>
 
                   <View style={styles.messageBox}>
-                    <Text style={styles.msgLabel}>Customer Message:</Text>
+                    <Text style={styles.msgLabel}>Tenant Inquiry:</Text>
                     <Text style={styles.msgText}>"{enq.message}"</Text>
                   </View>
 
@@ -139,7 +139,7 @@ export default function OwnerEnquiriesScreen() {
                     >
                       <Ionicons name="arrow-undo-outline" size={14} color="#FFFFFF" style={{ marginRight: 6 }} />
                       <Text style={styles.replyBtnText}>
-                        {enq.owner_reply ? 'Edit Reply' : 'Send Reply'}
+                        {enq.owner_reply ? 'Update Response' : 'Reply to Lead'}
                       </Text>
                     </TouchableOpacity>
                   </View>
@@ -154,7 +154,7 @@ export default function OwnerEnquiriesScreen() {
       <Modal
         visible={replyModalOpen}
         onClose={() => setReplyModalOpen(false)}
-        title="Reply to Customer Enquiry"
+        title="Reply to Tenant Lead"
       >
         <Text style={styles.modalSub}>
           Replying to {activeEnquiry?.user?.full_name} regarding "{activeEnquiry?.property?.title}"
