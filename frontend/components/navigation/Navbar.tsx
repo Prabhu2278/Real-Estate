@@ -23,18 +23,11 @@ export const Navbar: React.FC = () => {
   const navLinks = [
     { label: 'Home', path: '/' },
     { label: 'Properties', path: '/properties' },
-    { label: 'About', path: '/#about' },
-    { label: 'Contact', path: '/#contact' },
   ];
 
   const handleNavigate = (path: string) => {
     setMobileMenuOpen(false);
-    if (path.startsWith('/#')) {
-      // Anchor link
-      router.push('/' as any);
-    } else {
-      router.push(path as any);
-    }
+    router.push(path as any);
   };
 
   return (

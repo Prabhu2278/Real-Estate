@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,6 +8,8 @@ import {
   StyleSheet,
   useWindowDimensions,
   ImageBackground,
+  Linking,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,6 +24,8 @@ export default function HomeScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
+
+  const scrollViewRef = useRef<any>(null);
 
   const [listingType, setListingType] = useState<'rent' | 'buy'>('rent');
   const [location, setLocation] = useState<string>('');
@@ -75,7 +79,11 @@ export default function HomeScreen() {
     <View style={styles.screen}>
       <Navbar />
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        ref={scrollViewRef}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         {/* HERO SECTION */}
         <ImageBackground
           source={{ uri: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&auto=format&fit=crop&q=80' }}
@@ -296,6 +304,164 @@ export default function HomeScreen() {
                 <Text style={styles.benefitCardDesc}>
                   Enquire and chat directly with property owners without hidden middleman fees.
                 </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* CONTACT & OFFICE DETAILS SECTION */}
+          <View style={styles.aboutSection}>
+            {/* Header Badge & Title */}
+            <View style={styles.aboutHeader}>
+              <View style={styles.aboutBadge}>
+                <Ionicons name="information-circle" size={16} color={COLORS.primary} style={{ marginRight: 6 }} />
+                <Text style={styles.aboutBadgeText}>CONTACT & SUPPORT</Text>
+              </View>
+              <Text style={styles.aboutTitle}>Get in Touch with RealEstate</Text>
+              <Text style={styles.aboutSubtitle}>
+                Have questions about listings, need assistance with property verification, or want to list your space? Reach out through any of our direct channels below.
+              </Text>
+            </View>
+
+            {/* Platform Stats Row */}
+            <View style={[styles.aboutStatsGrid, isMobile && styles.aboutStatsGridMobile]}>
+              <View style={styles.aboutStatCard}>
+                <View style={[styles.aboutStatIcon, { backgroundColor: COLORS.primaryLight }]}>
+                  <Ionicons name="business" size={22} color={COLORS.primary} />
+                </View>
+                <Text style={styles.aboutStatValue}>1,200+</Text>
+                <Text style={styles.aboutStatLabel}>Verified Listings</Text>
+              </View>
+
+              <View style={styles.aboutStatCard}>
+                <View style={[styles.aboutStatIcon, { backgroundColor: COLORS.secondaryLight }]}>
+                  <Ionicons name="people" size={22} color={COLORS.secondary} />
+                </View>
+                <Text style={styles.aboutStatValue}>5,000+</Text>
+                <Text style={styles.aboutStatLabel}>Happy Families</Text>
+              </View>
+
+              <View style={styles.aboutStatCard}>
+                <View style={[styles.aboutStatIcon, { backgroundColor: COLORS.accentLight }]}>
+                  <Ionicons name="shield-checkmark" size={22} color={COLORS.accent} />
+                </View>
+                <Text style={styles.aboutStatValue}>99.2%</Text>
+                <Text style={styles.aboutStatLabel}>Verified Accuracy</Text>
+              </View>
+
+              <View style={styles.aboutStatCard}>
+                <View style={[styles.aboutStatIcon, { backgroundColor: '#EDE9FE' }]}>
+                  <Ionicons name="ribbon" size={22} color="#7C3AED" />
+                </View>
+                <Text style={styles.aboutStatValue}>10+ Years</Text>
+                <Text style={styles.aboutStatLabel}>Market Excellence</Text>
+              </View>
+            </View>
+
+            {/* About Pillars */}
+            <View style={[styles.aboutPillarsRow, isMobile && styles.aboutPillarsRowMobile]}>
+              <View style={styles.aboutPillarCard}>
+                <Text style={styles.aboutPillarIcon}>🏛️</Text>
+                <Text style={styles.aboutPillarTitle}>Verified Ownership</Text>
+                <Text style={styles.aboutPillarDesc}>
+                  Every property goes through administrator verification to confirm authentic ownership and honest pricing before going live.
+                </Text>
+              </View>
+
+              <View style={styles.aboutPillarCard}>
+                <Text style={styles.aboutPillarIcon}>🤝</Text>
+                <Text style={styles.aboutPillarTitle}>Zero Middleman Fees</Text>
+                <Text style={styles.aboutPillarDesc}>
+                  Inquire and message property owners directly. No inflated broker commissions or surprise closing fees.
+                </Text>
+              </View>
+
+              <View style={styles.aboutPillarCard}>
+                <Text style={styles.aboutPillarIcon}>📅</Text>
+                <Text style={styles.aboutPillarTitle}>Guaranteed Site Visits</Text>
+                <Text style={styles.aboutPillarDesc}>
+                  Book verified inspection slots online. Receive automatic confirmations and direct landlord contact numbers for visits.
+                </Text>
+              </View>
+            </View>
+
+            {/* Contact Details Section */}
+            <View style={styles.contactContainer}>
+              <View style={styles.contactSectionHeader}>
+                <Text style={styles.contactTitle}>Get In Touch With Our Team</Text>
+                <Text style={styles.contactSubtitle}>
+                  Have questions, need assistance with property verification, or want to list your space? Reach out through any of our direct channels below.
+                </Text>
+              </View>
+
+              <View style={[styles.contactCardsGrid, isMobile && styles.contactCardsGridMobile]}>
+                {/* Office Address */}
+                <View style={styles.contactCard}>
+                  <View style={[styles.contactCardIconWrap, { backgroundColor: COLORS.primaryLight }]}>
+                    <Ionicons name="location-outline" size={22} color={COLORS.primary} />
+                  </View>
+                  <Text style={styles.contactCardTitle}>Corporate Headquarters</Text>
+                  <Text style={styles.contactCardValue}>No. 42, Anna Salai, Guindy</Text>
+                  <Text style={styles.contactCardSub}>Chennai, Tamil Nadu 600032, India</Text>
+                </View>
+
+                {/* Direct Phone */}
+                <TouchableOpacity
+                  style={styles.contactCard}
+                  onPress={() => Linking.openURL('tel:+919876543210')}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.contactCardIconWrap, { backgroundColor: COLORS.secondaryLight }]}>
+                    <Ionicons name="call-outline" size={22} color={COLORS.secondary} />
+                  </View>
+                  <Text style={styles.contactCardTitle}>Phone & WhatsApp</Text>
+                  <Text style={[styles.contactCardValue, { color: COLORS.primary }]}>+91 98765 43210</Text>
+                  <Text style={styles.contactCardSub}>Toll-Free: 1800 123 4567</Text>
+                </TouchableOpacity>
+
+                {/* Email Support */}
+                <TouchableOpacity
+                  style={styles.contactCard}
+                  onPress={() => Linking.openURL('mailto:support@realestate.com')}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.contactCardIconWrap, { backgroundColor: COLORS.accentLight }]}>
+                    <Ionicons name="mail-outline" size={22} color={COLORS.accent} />
+                  </View>
+                  <Text style={styles.contactCardTitle}>Email Support</Text>
+                  <Text style={[styles.contactCardValue, { color: COLORS.primary }]}>support@realestate.com</Text>
+                  <Text style={styles.contactCardSub}>inquiries@realestate.com</Text>
+                </TouchableOpacity>
+
+                {/* Operating Hours */}
+                <View style={styles.contactCard}>
+                  <View style={[styles.contactCardIconWrap, { backgroundColor: '#EDE9FE' }]}>
+                    <Ionicons name="time-outline" size={22} color="#7C3AED" />
+                  </View>
+                  <Text style={styles.contactCardTitle}>Office & Support Hours</Text>
+                  <Text style={styles.contactCardValue}>Mon – Sat: 9:00 AM – 7:00 PM</Text>
+                  <Text style={styles.contactCardSub}>Sunday: 10:00 AM – 4:00 PM</Text>
+                </View>
+              </View>
+
+              {/* Action Buttons */}
+              <View style={[styles.contactActionRow, isMobile && styles.contactActionRowMobile]}>
+                <TouchableOpacity
+                  style={styles.contactPrimaryBtn}
+                  onPress={() => router.push('/properties' as any)}
+                  activeOpacity={0.85}
+                >
+                  <Ionicons name="search" size={18} color="#FFFFFF" style={{ marginRight: 8 }} />
+                  <Text style={styles.contactPrimaryBtnText}>Explore Properties</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.contactSecondaryBtn}
+                  onPress={() => Linking.openURL('tel:+919876543210')}
+                  activeOpacity={0.85}
+                >
+                  <Ionicons name="call" size={18} color={COLORS.primary} style={{ marginRight: 8 }} />
+                  <Text style={styles.contactSecondaryBtnText}>Call Support Line</Text>
+                </TouchableOpacity>
               </View>
             </View>
           </View>
@@ -724,5 +890,218 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#6B7280',
     textAlign: 'center',
+  },
+  aboutSection: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: RADIUS.xl,
+    padding: SPACING.xl,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    marginTop: 50,
+    ...SHADOWS.sm,
+  },
+  aboutHeader: {
+    alignItems: 'center',
+    marginBottom: SPACING.xl,
+  },
+  aboutBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primaryLight,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: RADIUS.full,
+    marginBottom: 12,
+  },
+  aboutBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: COLORS.primaryDark,
+    letterSpacing: 0.8,
+  },
+  aboutTitle: {
+    fontSize: 26,
+    fontWeight: '800',
+    color: COLORS.text,
+    textAlign: 'center',
+    marginBottom: 10,
+    maxWidth: 750,
+  },
+  aboutSubtitle: {
+    fontSize: 15,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+    lineHeight: 24,
+    maxWidth: 720,
+  },
+  aboutStatsGrid: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 32,
+  },
+  aboutStatsGridMobile: {
+    flexDirection: 'column',
+  },
+  aboutStatCard: {
+    flex: 1,
+    backgroundColor: COLORS.backgroundMuted,
+    borderRadius: RADIUS.lg,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.borderLight,
+  },
+  aboutStatIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: RADIUS.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
+  },
+  aboutStatValue: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: COLORS.text,
+    marginBottom: 2,
+  },
+  aboutStatLabel: {
+    fontSize: 12,
+    color: COLORS.textMuted,
+    fontWeight: '500',
+  },
+  aboutPillarsRow: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 40,
+  },
+  aboutPillarsRowMobile: {
+    flexDirection: 'column',
+  },
+  aboutPillarCard: {
+    flex: 1,
+    backgroundColor: COLORS.backgroundSubtle,
+    borderRadius: RADIUS.lg,
+    padding: 20,
+  },
+  aboutPillarIcon: {
+    fontSize: 28,
+    marginBottom: 10,
+  },
+  aboutPillarTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: 6,
+  },
+  aboutPillarDesc: {
+    fontSize: 13,
+    color: COLORS.textMuted,
+    lineHeight: 20,
+  },
+  contactContainer: {
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    paddingTop: 36,
+  },
+  contactSectionHeader: {
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  contactTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: 6,
+    textAlign: 'center',
+  },
+  contactSubtitle: {
+    fontSize: 14,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+    maxWidth: 620,
+    lineHeight: 20,
+  },
+  contactCardsGrid: {
+    flexDirection: 'row',
+    gap: 16,
+    marginBottom: 28,
+  },
+  contactCardsGridMobile: {
+    flexDirection: 'column',
+  },
+  contactCard: {
+    flex: 1,
+    backgroundColor: COLORS.backgroundMuted,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.lg,
+    padding: 18,
+    alignItems: 'center',
+  },
+  contactCardIconWrap: {
+    width: 48,
+    height: 48,
+    borderRadius: RADIUS.full,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
+  contactCardTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.text,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  contactCardValue: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.text,
+    marginBottom: 2,
+    textAlign: 'center',
+  },
+  contactCardSub: {
+    fontSize: 12,
+    color: COLORS.textMuted,
+    textAlign: 'center',
+  },
+  contactActionRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 14,
+    marginTop: 8,
+  },
+  contactActionRowMobile: {
+    flexDirection: 'column',
+    alignItems: 'stretch',
+  },
+  contactPrimaryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.primary,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: RADIUS.full,
+  },
+  contactPrimaryBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  contactSecondaryBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.primaryLight,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: RADIUS.full,
+  },
+  contactSecondaryBtnText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.primary,
   },
 });
