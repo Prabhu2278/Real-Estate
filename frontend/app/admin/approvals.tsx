@@ -100,10 +100,10 @@ export default function AdminApprovalsScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="admin" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="admin" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Text style={styles.title}>Property Listing Approvals</Text>
             <Text style={styles.subtitle}>
@@ -127,11 +127,11 @@ export default function AdminApprovalsScreen() {
                   'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00';
 
                 return (
-                  <View key={prop.id} style={styles.card}>
-                    <Image source={{ uri: img }} style={styles.thumb} />
+                  <View key={prop.id} style={[styles.card, isMobile && { flexDirection: 'column' }]}>
+                    <Image source={{ uri: img }} style={[styles.thumb, isMobile && { width: '100%', height: 180 }]} />
 
                     <View style={styles.contentCol}>
-                      <View style={styles.topRow}>
+                      <View style={[styles.topRow, isMobile && { flexDirection: 'column', gap: 8 }]}>
                         <View style={{ flex: 1 }}>
                           <Text style={styles.propTitle}>{prop.title}</Text>
                           <Text style={styles.propPrice}>
@@ -166,7 +166,7 @@ export default function AdminApprovalsScreen() {
                       </View>
 
                       {/* Action Buttons */}
-                      <View style={styles.actionsRow}>
+                      <View style={[styles.actionsRow, isMobile && { flexWrap: 'wrap', gap: 8 }]}>
                         <TouchableOpacity
                           style={styles.viewBtn}
                           onPress={() => router.push(`/properties/${prop.id}` as any)}

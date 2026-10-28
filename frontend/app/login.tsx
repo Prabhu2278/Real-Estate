@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Navbar } from '../components/navigation/Navbar';
 import { COLORS, RADIUS, SHADOWS, SPACING } from '../constants/theme';
 import { useAuth } from '../hooks/useAuth';
+import { getApiErrorMessage } from '../utils/format';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -52,7 +53,7 @@ export default function LoginScreen() {
         router.replace('/customer/dashboard' as any);
       }
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.detail || 'Invalid email or password. Please try again.');
+      setErrorMessage(getApiErrorMessage(err, 'Invalid email or password. Please try again.'));
     } finally {
       setLoading(false);
     }
@@ -139,10 +140,12 @@ export default function LoginScreen() {
             <Text style={styles.welcomeTitle}>Welcome Back!</Text>
             <Text style={styles.welcomeSubtitle}>Sign in to your account</Text>
 
-            {errorMessage && (
+            {!!errorMessage && (
               <View style={styles.errorBox}>
                 <Ionicons name="alert-circle" size={18} color={COLORS.danger} style={{ marginRight: 6 }} />
-                <Text style={styles.errorText}>{errorMessage}</Text>
+                <Text style={styles.errorText}>
+                  {typeof errorMessage === 'string' ? errorMessage : getApiErrorMessage(errorMessage)}
+                </Text>
               </View>
             )}
 
@@ -255,7 +258,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: SPACING.md,
+    padding: SPACING.sm,
   },
   cardContainer: {
     flexDirection: 'row',
@@ -317,7 +320,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   formSideMobile: {
-    padding: SPACING.lg,
+    padding: SPACING.md,
   },
   tabToggle: {
     flexDirection: 'row',

@@ -83,10 +83,10 @@ export default function AdminUsersScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="admin" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="admin" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Text style={styles.title}>Manage Registered Users</Text>
             <Text style={styles.subtitle}>
@@ -95,7 +95,7 @@ export default function AdminUsersScreen() {
           </View>
 
           {/* Search & Filter Bar */}
-          <View style={styles.filterRow}>
+          <View style={[styles.filterRow, isMobile && { flexDirection: 'column', alignItems: 'stretch', gap: 10 }]}>
             <View style={styles.searchBox}>
               <Ionicons name="search" size={16} color={COLORS.textMuted} style={{ marginRight: 6 }} />
               <TextInput
@@ -110,7 +110,7 @@ export default function AdminUsersScreen() {
               </TouchableOpacity>
             </View>
 
-            <View style={styles.tabsRow}>
+            <View style={[styles.tabsRow, isMobile && { flexWrap: 'wrap', gap: 6 }]}>
               {roleTabs.map((tab) => {
                 const isActive = roleFilter === tab.value;
                 return (
@@ -132,67 +132,71 @@ export default function AdminUsersScreen() {
             <LoadingSpinner message="Loading user records..." />
           ) : (
             <View style={styles.card}>
-              <View style={styles.tableHeader}>
-                <Text style={[styles.th, { flex: 2 }]}>User</Text>
-                <Text style={[styles.th, { flex: 1.5 }]}>Phone</Text>
-                <Text style={[styles.th, { flex: 1 }]}>Role</Text>
-                <Text style={[styles.th, { flex: 1 }]}>Status</Text>
-                <Text style={[styles.th, { flex: 1.2, textAlign: 'right' }]}>Action</Text>
-              </View>
+              <ScrollView horizontal={isMobile} showsHorizontalScrollIndicator={false}>
+                <View style={[isMobile && { minWidth: 640 }]}>
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.th, { flex: 2 }]}>User</Text>
+                    <Text style={[styles.th, { flex: 1.5 }]}>Phone</Text>
+                    <Text style={[styles.th, { flex: 1 }]}>Role</Text>
+                    <Text style={[styles.th, { flex: 1 }]}>Status</Text>
+                    <Text style={[styles.th, { flex: 1.2, textAlign: 'right' }]}>Action</Text>
+                  </View>
 
-              {users.map((u) => (
-                <View key={u.id} style={styles.tr}>
-                  <View style={[styles.userCol, { flex: 2 }]}>
-                    <View style={styles.avatar}>
-                      <Text style={styles.avatarText}>{u.full_name?.charAt(0).toUpperCase()}</Text>
+                  {users.map((u) => (
+                    <View key={u.id} style={styles.tr}>
+                      <View style={[styles.userCol, { flex: 2 }]}>
+                        <View style={styles.avatar}>
+                          <Text style={styles.avatarText}>{u.full_name?.charAt(0).toUpperCase()}</Text>
+                        </View>
+                        <View>
+                          <Text style={styles.userName}>{u.full_name}</Text>
+                          <Text style={styles.userEmail}>{u.email}</Text>
+                          <Text style={styles.joinDate}>Joined {formatDate(u.created_at)}</Text>
+                        </View>
+                      </View>
+
+                      <View style={{ flex: 1.5 }}>
+                        <Text style={styles.phoneText}>{u.phone || '—'}</Text>
+                      </View>
+
+                      <View style={{ flex: 1 }}>
+                        <View style={[styles.roleTag, u.role === 'admin' ? styles.roleAdmin : u.role === 'owner' ? styles.roleOwner : styles.roleCustomer]}>
+                          <Text style={styles.roleTagText}>{u.role}</Text>
+                        </View>
+                      </View>
+
+                      <View style={{ flex: 1 }}>
+                        <View style={[styles.statusBadge, u.is_active ? styles.statusActive : styles.statusInactive]}>
+                          <Text style={[styles.statusText, u.is_active ? styles.statusTextActive : styles.statusTextInactive]}>
+                            {u.is_active ? 'Active' : 'Deactivated'}
+                          </Text>
+                        </View>
+                      </View>
+
+                      <View style={{ flex: 1.2, alignItems: 'flex-end' }}>
+                        {u.id !== currentUser?.id && (
+                          <TouchableOpacity
+                            style={[
+                              styles.toggleBtn,
+                              u.is_active ? styles.toggleBtnDeact : styles.toggleBtnAct,
+                            ]}
+                            onPress={() => handleToggleActive(u)}
+                          >
+                            <Text
+                              style={[
+                                styles.toggleBtnText,
+                                u.is_active ? styles.toggleTextDeact : styles.toggleTextAct,
+                              ]}
+                            >
+                              {u.is_active ? 'Deactivate' : 'Activate'}
+                            </Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
                     </View>
-                    <View>
-                      <Text style={styles.userName}>{u.full_name}</Text>
-                      <Text style={styles.userEmail}>{u.email}</Text>
-                      <Text style={styles.joinDate}>Joined {formatDate(u.created_at)}</Text>
-                    </View>
-                  </View>
-
-                  <View style={{ flex: 1.5 }}>
-                    <Text style={styles.phoneText}>{u.phone || '—'}</Text>
-                  </View>
-
-                  <View style={{ flex: 1 }}>
-                    <View style={[styles.roleTag, u.role === 'admin' ? styles.roleAdmin : u.role === 'owner' ? styles.roleOwner : styles.roleCustomer]}>
-                      <Text style={styles.roleTagText}>{u.role}</Text>
-                    </View>
-                  </View>
-
-                  <View style={{ flex: 1 }}>
-                    <View style={[styles.statusBadge, u.is_active ? styles.statusActive : styles.statusInactive]}>
-                      <Text style={[styles.statusText, u.is_active ? styles.statusTextActive : styles.statusTextInactive]}>
-                        {u.is_active ? 'Active' : 'Deactivated'}
-                      </Text>
-                    </View>
-                  </View>
-
-                  <View style={{ flex: 1.2, alignItems: 'flex-end' }}>
-                    {u.id !== currentUser?.id && (
-                      <TouchableOpacity
-                        style={[
-                          styles.toggleBtn,
-                          u.is_active ? styles.toggleBtnDeact : styles.toggleBtnAct,
-                        ]}
-                        onPress={() => handleToggleActive(u)}
-                      >
-                        <Text
-                          style={[
-                            styles.toggleBtnText,
-                            u.is_active ? styles.toggleTextDeact : styles.toggleTextAct,
-                          ]}
-                        >
-                          {u.is_active ? 'Deactivate' : 'Activate'}
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
+                  ))}
                 </View>
-              ))}
+              </ScrollView>
             </View>
           )}
         </ScrollView>

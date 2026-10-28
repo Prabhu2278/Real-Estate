@@ -66,12 +66,12 @@ export default function CustomerDashboardScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
         {/* Sidebar */}
-        {!isMobile && <Sidebar role="customer" />}
+        <Sidebar role="customer" />
 
         {/* Main Content Area */}
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           {/* Top Greeting */}
           <View style={styles.topHeader}>
             <Text style={styles.welcomeTitle}>

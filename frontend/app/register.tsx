@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Navbar } from '../components/navigation/Navbar';
 import { COLORS, RADIUS, SHADOWS, SPACING } from '../constants/theme';
 import { useAuth } from '../hooks/useAuth';
+import { getApiErrorMessage } from '../utils/format';
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -70,7 +71,7 @@ export default function RegisterScreen() {
         router.replace('/customer/dashboard' as any);
       }
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.detail || 'Registration failed. Email might already be in use.');
+      setErrorMessage(getApiErrorMessage(err, 'Registration failed. Email might already be in use.'));
     } finally {
       setLoading(false);
     }
@@ -132,10 +133,12 @@ export default function RegisterScreen() {
             <Text style={styles.welcomeTitle}>Create an Account</Text>
             <Text style={styles.welcomeSubtitle}>Get started with your free profile</Text>
 
-            {errorMessage && (
+            {!!errorMessage && (
               <View style={styles.errorBox}>
                 <Ionicons name="alert-circle" size={18} color={COLORS.danger} style={{ marginRight: 6 }} />
-                <Text style={styles.errorText}>{errorMessage}</Text>
+                <Text style={styles.errorText}>
+                  {typeof errorMessage === 'string' ? errorMessage : getApiErrorMessage(errorMessage)}
+                </Text>
               </View>
             )}
 
@@ -290,7 +293,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: SPACING.md,
+    padding: SPACING.sm,
   },
   cardContainer: {
     flexDirection: 'row',
@@ -345,7 +348,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   formSideMobile: {
-    padding: SPACING.lg,
+    padding: SPACING.md,
   },
   tabToggle: {
     flexDirection: 'row',

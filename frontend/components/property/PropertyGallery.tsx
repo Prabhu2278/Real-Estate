@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  useWindowDimensions,
+} from 'react-native';
 import { PropertyImage } from '../../types';
 import { COLORS, RADIUS, SHADOWS } from '../../constants/theme';
 
@@ -9,6 +16,9 @@ interface PropertyGalleryProps {
 }
 
 export const PropertyGallery: React.FC<PropertyGalleryProps> = ({ images, fallbackUrl }) => {
+  const { width } = useWindowDimensions();
+  const isMobile = width < 768;
+
   const defaultImage =
     images?.[0]?.image_url ||
     fallbackUrl ||
@@ -24,7 +34,7 @@ export const PropertyGallery: React.FC<PropertyGalleryProps> = ({ images, fallba
   return (
     <View style={styles.container}>
       {/* Main Image */}
-      <View style={styles.mainImageContainer}>
+      <View style={[styles.mainImageContainer, { height: isMobile ? 230 : 380 }]}>
         <Image
           source={{ uri: displayImage }}
           style={styles.mainImage}
@@ -69,7 +79,6 @@ const styles = StyleSheet.create({
   },
   mainImageContainer: {
     width: '100%',
-    height: 380,
     borderRadius: RADIUS.lg,
     overflow: 'hidden',
     backgroundColor: '#F3F4F6',
@@ -81,13 +90,13 @@ const styles = StyleSheet.create({
   },
   thumbnailsRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 12,
+    gap: 10,
+    marginTop: 10,
     paddingVertical: 4,
   },
   thumbnailWrap: {
-    width: 80,
-    height: 60,
+    width: 76,
+    height: 56,
     borderRadius: RADIUS.md,
     overflow: 'hidden',
     borderWidth: 2,

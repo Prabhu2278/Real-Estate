@@ -16,6 +16,7 @@ import { Sidebar } from '../../components/navigation/Sidebar';
 import { COLORS, RADIUS, SHADOWS, SPACING } from '../../constants/theme';
 import { authService } from '../../services/auth.service';
 import { useAuth } from '../../hooks/useAuth';
+import { getApiErrorMessage } from '../../utils/format';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -103,7 +104,7 @@ export default function ProfileScreen() {
       setConfirmPassword('');
       setTimeout(() => setPasswordSuccess(false), 3000);
     } catch (err: any) {
-      setPasswordError(err.response?.data?.detail || 'Failed to change password');
+      setPasswordError(getApiErrorMessage(err, 'Failed to change password'));
     } finally {
       setChangingPassword(false);
     }
@@ -116,10 +117,10 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role={user.role} />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role={user.role} />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Text style={styles.title}>Account Profile & Settings</Text>
             <Text style={styles.subtitle}>
@@ -128,7 +129,7 @@ export default function ProfileScreen() {
           </View>
 
           {/* User Profile Card */}
-          <View style={styles.card}>
+          <View style={[styles.card, isMobile && { padding: SPACING.md }]}>
             <View style={styles.avatarRow}>
               <View style={styles.avatar}>
                 <Text style={styles.avatarText}>{user.full_name?.charAt(0).toUpperCase()}</Text>
@@ -197,7 +198,7 @@ export default function ProfileScreen() {
           </View>
 
           {/* Password Security Card */}
-          <View style={[styles.card, { marginTop: 24 }]}>
+          <View style={[styles.card, { marginTop: 24 }, isMobile && { padding: SPACING.md }]}>
             <Text style={styles.sectionHeading}>Security & Password</Text>
 
             {passwordSuccess && (
@@ -207,10 +208,12 @@ export default function ProfileScreen() {
               </View>
             )}
 
-            {passwordError && (
+            {!!passwordError && (
               <View style={styles.errorBox}>
                 <Ionicons name="alert-circle" size={16} color={COLORS.danger} style={{ marginRight: 6 }} />
-                <Text style={styles.errorText}>{passwordError}</Text>
+                <Text style={styles.errorText}>
+                  {typeof passwordError === 'string' ? passwordError : getApiErrorMessage(passwordError)}
+                </Text>
               </View>
             )}
 

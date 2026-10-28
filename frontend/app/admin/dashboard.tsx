@@ -65,11 +65,11 @@ export default function AdminDashboardScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="admin" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="admin" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
-          <View style={styles.header}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
+          <View style={[styles.header, isMobile && { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View>
               <Text style={styles.title}>Admin Dashboard</Text>
               <Text style={styles.subtitle}>
@@ -133,41 +133,43 @@ export default function AdminDashboardScreen() {
                 {dashboardData?.pending_properties.length === 0 && dashboardData?.recent_properties.length === 0 ? (
                   <Text style={styles.emptyText}>No listings to review.</Text>
                 ) : (
-                  <View style={styles.table}>
-                    <View style={styles.tableHeader}>
-                      <Text style={[styles.th, { flex: 2 }]}>Property</Text>
-                      <Text style={[styles.th, { flex: 1.5 }]}>Owner</Text>
-                      <Text style={[styles.th, { flex: 1 }]}>Status</Text>
-                      <Text style={[styles.th, { flex: 1, textAlign: 'right' }]}>Action</Text>
-                    </View>
-
-                    {(dashboardData?.pending_properties.length ? dashboardData.pending_properties : dashboardData?.recent_properties || []).map((prop: Property) => (
-                      <View key={prop.id} style={styles.tr}>
-                        <View style={{ flex: 2 }}>
-                          <Text style={styles.tdTitle}>{prop.title}</Text>
-                          <Text style={styles.tdSub}>{prop.city} · {formatPrice(Number(prop.price), prop.listing_type)}</Text>
-                        </View>
-
-                        <View style={{ flex: 1.5 }}>
-                          <Text style={styles.tdText}>{prop.owner?.full_name || `Owner #${prop.owner_id}`}</Text>
-                          <Text style={styles.tdSub}>{prop.owner?.email || ''}</Text>
-                        </View>
-
-                        <View style={{ flex: 1 }}>
-                          <StatusBadge status={prop.status} size="sm" />
-                        </View>
-
-                        <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                          <TouchableOpacity
-                            style={styles.reviewBtn}
-                            onPress={() => router.push('/admin/approvals' as any)}
-                          >
-                            <Text style={styles.reviewBtnText}>Review</Text>
-                          </TouchableOpacity>
-                        </View>
+                  <ScrollView horizontal={isMobile} showsHorizontalScrollIndicator={false}>
+                    <View style={[styles.table, isMobile && { minWidth: 540 }]}>
+                      <View style={styles.tableHeader}>
+                        <Text style={[styles.th, { flex: 2 }]}>Property</Text>
+                        <Text style={[styles.th, { flex: 1.5 }]}>Owner</Text>
+                        <Text style={[styles.th, { flex: 1 }]}>Status</Text>
+                        <Text style={[styles.th, { flex: 1, textAlign: 'right' }]}>Action</Text>
                       </View>
-                    ))}
-                  </View>
+
+                      {(dashboardData?.pending_properties.length ? dashboardData.pending_properties : dashboardData?.recent_properties || []).map((prop: Property) => (
+                        <View key={prop.id} style={styles.tr}>
+                          <View style={{ flex: 2 }}>
+                            <Text style={styles.tdTitle}>{prop.title}</Text>
+                            <Text style={styles.tdSub}>{prop.city} · {formatPrice(Number(prop.price), prop.listing_type)}</Text>
+                          </View>
+
+                          <View style={{ flex: 1.5 }}>
+                            <Text style={styles.tdText}>{prop.owner?.full_name || `Owner #${prop.owner_id}`}</Text>
+                            <Text style={styles.tdSub}>{prop.owner?.email || ''}</Text>
+                          </View>
+
+                          <View style={{ flex: 1 }}>
+                            <StatusBadge status={prop.status} size="sm" />
+                          </View>
+
+                          <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                            <TouchableOpacity
+                              style={styles.reviewBtn}
+                              onPress={() => router.push('/admin/approvals' as any)}
+                            >
+                              <Text style={styles.reviewBtnText}>Review</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      ))}
+                    </View>
+                  </ScrollView>
                 )}
               </View>
 

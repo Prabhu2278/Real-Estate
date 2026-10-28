@@ -178,7 +178,7 @@ export default function PropertyDetailScreen() {
       <Navbar />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <View style={styles.container}>
+        <View style={[styles.container, isMobile && { paddingHorizontal: SPACING.sm }]}>
           {/* Breadcrumb / Back Navigation */}
           <View style={styles.breadcrumbRow}>
             <TouchableOpacity onPress={() => router.push('/properties' as any)} style={styles.backBtn}>
@@ -190,14 +190,14 @@ export default function PropertyDetailScreen() {
           </View>
 
           {/* Two-Column Layout */}
-          <View style={styles.layoutRow}>
+          <View style={[styles.layoutRow, isMobile && { flexDirection: 'column', gap: 16 }]}>
             {/* Left Column: Gallery & Details */}
-            <View style={styles.mainCol}>
+            <View style={[styles.mainCol, isMobile && { width: '100%', minWidth: '100%' }]}>
               {/* Photo Gallery */}
               <PropertyGallery images={property.images} />
 
               {/* Title & Price Header */}
-              <View style={styles.detailHeaderCard}>
+              <View style={[styles.detailHeaderCard, isMobile && { padding: SPACING.md }]}>
                 <View style={styles.detailTitleRow}>
                   <View style={{ flex: 1 }}>
                     <View style={styles.typeTag}>
@@ -296,7 +296,7 @@ export default function PropertyDetailScreen() {
             </View>
 
             {/* Right Column: Contact Owner & Schedule */}
-            <View style={styles.sideCol}>
+            <View style={[styles.sideCol, isMobile && { width: '100%' }]}>
               {/* Contact Owner Card */}
               <View style={styles.ownerCard}>
                 <Text style={styles.cardHeading}>Contact Owner</Text>

@@ -61,12 +61,12 @@ export default function OwnerDashboardScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="owner" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="owner" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           {/* Header Row */}
-          <View style={styles.topHeader}>
+          <View style={[styles.topHeader, isMobile && { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View>
               <Text style={styles.welcomeTitle}>
                 Welcome back, {user?.full_name?.split(' ')[0] || 'Ramesh'}!

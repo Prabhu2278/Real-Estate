@@ -18,6 +18,7 @@ import { COLORS, RADIUS, SHADOWS, SPACING } from '../../constants/theme';
 import { PROPERTY_TYPES, FURNISHING_OPTIONS } from '../../constants/config';
 import { propertyService } from '../../services/property.service';
 import { useAuth } from '../../hooks/useAuth';
+import { getApiErrorMessage } from '../../utils/format';
 
 export default function AddPropertyScreen() {
   const router = useRouter();
@@ -165,7 +166,7 @@ export default function AddPropertyScreen() {
         ]
       );
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.detail || 'Failed to submit property.');
+      setErrorMessage(getApiErrorMessage(err, 'Failed to submit property.'));
     } finally {
       setLoading(false);
     }
@@ -180,10 +181,10 @@ export default function AddPropertyScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="owner" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="owner" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Text style={styles.title}>Add New Property</Text>
             <Text style={styles.subtitle}>
@@ -192,7 +193,7 @@ export default function AddPropertyScreen() {
           </View>
 
           {/* Stepper Wizard Bar */}
-          <View style={styles.stepperWrap}>
+          <View style={[styles.stepperWrap, isMobile && { padding: SPACING.sm }]}>
             {steps.map((st, i) => {
               const isPast = currentStep > st.num;
               const isCurrent = currentStep === st.num;
@@ -220,14 +221,16 @@ export default function AddPropertyScreen() {
                         </Text>
                       )}
                     </View>
-                    <Text
-                      style={[
-                        styles.stepLabel,
-                        (isCurrent || isPast) && styles.stepLabelActive,
-                      ]}
-                    >
-                      {st.label}
-                    </Text>
+                    {!isMobile && (
+                      <Text
+                        style={[
+                          styles.stepLabel,
+                          (isCurrent || isPast) && styles.stepLabelActive,
+                        ]}
+                      >
+                        {st.label}
+                      </Text>
+                    )}
                   </View>
                   {i < steps.length - 1 && (
                     <View
@@ -238,12 +241,19 @@ export default function AddPropertyScreen() {
               );
             })}
           </View>
+          {isMobile && (
+            <Text style={{ textAlign: 'center', fontSize: 13, fontWeight: '600', color: COLORS.primary, marginBottom: 16 }}>
+              Step {currentStep} of 4: {steps[currentStep - 1].label}
+            </Text>
+          )}
 
           {/* Error Message */}
-          {errorMessage && (
+          {!!errorMessage && (
             <View style={styles.errorBox}>
               <Ionicons name="alert-circle" size={18} color={COLORS.danger} style={{ marginRight: 6 }} />
-              <Text style={styles.errorText}>{errorMessage}</Text>
+              <Text style={styles.errorText}>
+                {typeof errorMessage === 'string' ? errorMessage : getApiErrorMessage(errorMessage)}
+              </Text>
             </View>
           )}
 

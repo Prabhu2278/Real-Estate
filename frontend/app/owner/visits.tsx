@@ -95,10 +95,10 @@ export default function OwnerVisitsScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="owner" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="owner" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Text style={styles.title}>Visit Scheduling Requests</Text>
             <Text style={styles.subtitle}>
@@ -118,7 +118,7 @@ export default function OwnerVisitsScreen() {
             <View style={styles.list}>
               {visits.map((vst) => (
                 <View key={vst.id} style={styles.card}>
-                  <View style={styles.cardHeader}>
+                  <View style={[styles.cardHeader, isMobile && { flexDirection: 'column', alignItems: 'flex-start', gap: 8 }]}>
                     <View>
                       <Text style={styles.propTitle}>
                         {vst.property?.title || `Property ID #${vst.property_id}`}
@@ -158,7 +158,7 @@ export default function OwnerVisitsScreen() {
 
                   {/* Action Buttons if Pending */}
                   {vst.status === 'pending' && (
-                    <View style={styles.actionsRow}>
+                    <View style={[styles.actionsRow, isMobile && { flexWrap: 'wrap', gap: 8 }]}>
                       <TouchableOpacity
                         style={styles.confirmBtn}
                         onPress={() => openActionModal(vst, 'confirmed')}

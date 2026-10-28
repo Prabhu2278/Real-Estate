@@ -64,10 +64,10 @@ export default function CustomerFavoritesScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="customer" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="customer" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           {/* Header */}
           <View style={styles.header}>
             <View>
@@ -98,8 +98,8 @@ export default function CustomerFavoritesScreen() {
                   'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00';
 
                 return (
-                  <View key={fav.id} style={styles.itemCard}>
-                    <Image source={{ uri: primaryImage }} style={styles.image} />
+                  <View key={fav.id} style={[styles.itemCard, isMobile && { flexDirection: 'column' }]}>
+                    <Image source={{ uri: primaryImage }} style={[styles.image, isMobile && { width: '100%', height: 160 }]} />
 
                     <View style={styles.infoCol}>
                       <View style={styles.titleRow}>

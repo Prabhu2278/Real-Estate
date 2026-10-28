@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  useWindowDimensions,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Property } from '../../types';
@@ -21,6 +28,8 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
 }) => {
   const router = useRouter();
   const { isAuthenticated } = useAuth();
+  const { width } = useWindowDimensions();
+  const isNarrow = width < 640;
   const [isFavorite, setIsFavorite] = useState<boolean>(!!property.is_favorite);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
@@ -52,7 +61,8 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({
     }
   };
 
-  const isList = layout === 'list';
+  // On narrow/mobile screens, list layout automatically falls back to vertical column
+  const isList = layout === 'list' && !isNarrow;
 
   return (
     <TouchableOpacity
@@ -183,12 +193,12 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     width: '100%',
-    height: 200,
+    height: 190,
     position: 'relative',
     backgroundColor: '#F3F4F6',
   },
   imageContainerList: {
-    width: 260,
+    width: 240,
     height: '100%',
     minHeight: 180,
   },
@@ -237,7 +247,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
     color: COLORS.text,
     flex: 1,
@@ -251,7 +261,7 @@ const styles = StyleSheet.create({
   locationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 10,
   },
   locationText: {
     fontSize: 13,
@@ -262,11 +272,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: 8,
     paddingVertical: 8,
     borderTopWidth: 1,
     borderTopColor: COLORS.borderLight,
-    marginBottom: 8,
+    marginBottom: 6,
   },
   specItem: {
     flexDirection: 'row',

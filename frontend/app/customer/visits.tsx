@@ -90,10 +90,10 @@ export default function CustomerVisitsScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="customer" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="customer" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Text style={styles.title}>Scheduled Property Visits</Text>
             <Text style={styles.subtitle}>
@@ -122,7 +122,7 @@ export default function CustomerVisitsScreen() {
                 return (
                   <View key={vst.id} style={styles.card}>
                     {/* Top Row: Date, Slot, Status */}
-                    <View style={styles.cardHeader}>
+                    <View style={[styles.cardHeader, isMobile && { flexDirection: 'column', alignItems: 'flex-start', gap: 8 }]}>
                       <View style={styles.propRow}>
                         <Image source={{ uri: propImage }} style={styles.thumb} />
                         <View style={{ flex: 1 }}>
@@ -167,7 +167,7 @@ export default function CustomerVisitsScreen() {
                     )}
 
                     {/* Footer Actions */}
-                    <View style={styles.cardFooter}>
+                    <View style={[styles.cardFooter, isMobile && { flexDirection: 'column', gap: 8, alignItems: 'stretch' }]}>
                       {prop && (
                         <TouchableOpacity
                           style={styles.viewPropBtn}

@@ -21,6 +21,7 @@ import { PROPERTY_TYPES, FURNISHING_OPTIONS } from '../../constants/config';
 import { propertyService } from '../../services/property.service';
 import { useAuth } from '../../hooks/useAuth';
 import { Property } from '../../types';
+import { getApiErrorMessage } from '../../utils/format';
 
 export default function EditPropertyScreen() {
   const router = useRouter();
@@ -129,7 +130,7 @@ export default function EditPropertyScreen() {
         { text: 'OK', onPress: () => router.push('/owner/properties' as any) },
       ]);
     } catch (err: any) {
-      setErrorMessage(err.response?.data?.detail || 'Failed to update property.');
+      setErrorMessage(getApiErrorMessage(err, 'Failed to update property.'));
     } finally {
       setSaving(false);
     }
@@ -146,12 +147,12 @@ export default function EditPropertyScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="owner" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="owner" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
-          <View style={styles.header}>
-            <View>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
+          <View style={[styles.header, isMobile && { flexDirection: 'row', flexWrap: 'wrap', gap: 10, alignItems: 'center' }]}>
+            <View style={{ flex: 1 }}>
               <Text style={styles.title}>Edit Property</Text>
               <Text style={styles.subtitle}>Update pricing, specifications, and images.</Text>
             </View>
@@ -160,14 +161,16 @@ export default function EditPropertyScreen() {
             </TouchableOpacity>
           </View>
 
-          {errorMessage && (
+          {!!errorMessage && (
             <View style={styles.errorBox}>
               <Ionicons name="alert-circle" size={18} color={COLORS.danger} style={{ marginRight: 6 }} />
-              <Text style={styles.errorText}>{errorMessage}</Text>
+              <Text style={styles.errorText}>
+                {typeof errorMessage === 'string' ? errorMessage : getApiErrorMessage(errorMessage)}
+              </Text>
             </View>
           )}
 
-          <View style={styles.card}>
+          <View style={[styles.card, isMobile && { padding: SPACING.md }]}>
             <Text style={styles.sectionHeading}>Basic Information</Text>
 
             <View style={styles.formGroup}>

@@ -102,11 +102,11 @@ export default function OwnerPropertiesScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="owner" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="owner" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
-          <View style={styles.header}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
+          <View style={[styles.header, isMobile && { flexDirection: 'column', alignItems: 'flex-start', gap: 12 }]}>
             <View>
               <Text style={styles.title}>My Listed Properties</Text>
               <Text style={styles.subtitle}>
@@ -124,7 +124,7 @@ export default function OwnerPropertiesScreen() {
           </View>
 
           {/* Status Filter Tabs */}
-          <View style={styles.tabsRow}>
+          <View style={[styles.tabsRow, isMobile && { flexWrap: 'wrap', gap: 6 }]}>
             {filterTabs.map((tab) => {
               const isActive = statusFilter === tab.value;
               return (
@@ -158,8 +158,8 @@ export default function OwnerPropertiesScreen() {
                   prop.images?.[0]?.image_url ||
                   'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00';
                 return (
-                  <View key={prop.id} style={styles.card}>
-                    <Image source={{ uri: img }} style={styles.thumb} />
+                  <View key={prop.id} style={[styles.card, isMobile && { flexDirection: 'column' }]}>
+                    <Image source={{ uri: img }} style={[styles.thumb, isMobile && { width: '100%', height: 180 }]} />
 
                     <View style={styles.contentCol}>
                       <View style={styles.topRow}>
@@ -199,7 +199,7 @@ export default function OwnerPropertiesScreen() {
                       </View>
 
                       {/* Action Buttons Row */}
-                      <View style={styles.actionsRow}>
+                      <View style={[styles.actionsRow, isMobile && { flexWrap: 'wrap', gap: 8 }]}>
                         <TouchableOpacity
                           style={styles.actionBtnOutline}
                           onPress={() => router.push(`/properties/${prop.id}` as any)}

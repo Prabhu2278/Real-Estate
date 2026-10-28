@@ -62,10 +62,10 @@ export default function AdminPropertiesScreen() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.bodyRow}>
-        {!isMobile && <Sidebar role="admin" />}
+      <View style={[styles.bodyRow, isMobile && { flexDirection: 'column' }]}>
+        <Sidebar role="admin" />
 
-        <ScrollView style={styles.mainContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={[styles.mainContent, isMobile && { padding: SPACING.sm }]} showsVerticalScrollIndicator={false}>
           <View style={styles.header}>
             <Text style={styles.title}>All Platform Properties</Text>
             <Text style={styles.subtitle}>
@@ -74,7 +74,7 @@ export default function AdminPropertiesScreen() {
           </View>
 
           {/* Filter Tabs */}
-          <View style={styles.tabsRow}>
+          <View style={[styles.tabsRow, isMobile && { flexWrap: 'wrap', gap: 6 }]}>
             {tabs.map((tab) => {
               const isActive = statusFilter === tab.value;
               return (
@@ -95,57 +95,59 @@ export default function AdminPropertiesScreen() {
             <LoadingSpinner message="Loading properties..." />
           ) : (
             <View style={styles.card}>
-              <View style={styles.table}>
-                <View style={styles.tableHeader}>
-                  <Text style={[styles.th, { flex: 2 }]}>Property</Text>
-                  <Text style={[styles.th, { flex: 1.5 }]}>Location / City</Text>
-                  <Text style={[styles.th, { flex: 1 }]}>Type</Text>
-                  <Text style={[styles.th, { flex: 1 }]}>Status</Text>
-                  <Text style={[styles.th, { flex: 1, textAlign: 'right' }]}>Action</Text>
-                </View>
+              <ScrollView horizontal={isMobile} showsHorizontalScrollIndicator={false}>
+                <View style={[styles.table, isMobile && { minWidth: 620 }]}>
+                  <View style={styles.tableHeader}>
+                    <Text style={[styles.th, { flex: 2 }]}>Property</Text>
+                    <Text style={[styles.th, { flex: 1.5 }]}>Location / City</Text>
+                    <Text style={[styles.th, { flex: 1 }]}>Type</Text>
+                    <Text style={[styles.th, { flex: 1 }]}>Status</Text>
+                    <Text style={[styles.th, { flex: 1, textAlign: 'right' }]}>Action</Text>
+                  </View>
 
-                {properties.map((prop) => {
-                  const img =
-                    prop.images?.[0]?.image_url ||
-                    'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00';
-                  return (
-                    <View key={prop.id} style={styles.tr}>
-                      <View style={[styles.propCol, { flex: 2 }]}>
-                        <Image source={{ uri: img }} style={styles.thumb} />
+                  {properties.map((prop) => {
+                    const img =
+                      prop.images?.[0]?.image_url ||
+                      'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00';
+                    return (
+                      <View key={prop.id} style={styles.tr}>
+                        <View style={[styles.propCol, { flex: 2 }]}>
+                          <Image source={{ uri: img }} style={styles.thumb} />
+                          <View style={{ flex: 1 }}>
+                            <Text style={styles.propTitle} numberOfLines={1}>{prop.title}</Text>
+                            <Text style={styles.propPrice}>
+                              {formatPrice(Number(prop.price), prop.listing_type)}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <View style={{ flex: 1.5 }}>
+                          <Text style={styles.tdText}>{prop.address}</Text>
+                          <Text style={styles.tdSub}>{prop.city}</Text>
+                        </View>
+
                         <View style={{ flex: 1 }}>
-                          <Text style={styles.propTitle} numberOfLines={1}>{prop.title}</Text>
-                          <Text style={styles.propPrice}>
-                            {formatPrice(Number(prop.price), prop.listing_type)}
-                          </Text>
+                          <Text style={styles.tdText}>{prop.property_type}</Text>
+                          <Text style={styles.tdSub}>{prop.bedrooms} BHK</Text>
+                        </View>
+
+                        <View style={{ flex: 1 }}>
+                          <StatusBadge status={prop.status} size="sm" />
+                        </View>
+
+                        <View style={{ flex: 1, alignItems: 'flex-end' }}>
+                          <TouchableOpacity
+                            style={styles.actionBtn}
+                            onPress={() => router.push(`/properties/${prop.id}` as any)}
+                          >
+                            <Text style={styles.actionBtnText}>View</Text>
+                          </TouchableOpacity>
                         </View>
                       </View>
-
-                      <View style={{ flex: 1.5 }}>
-                        <Text style={styles.tdText}>{prop.address}</Text>
-                        <Text style={styles.tdSub}>{prop.city}</Text>
-                      </View>
-
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.tdText}>{prop.property_type}</Text>
-                        <Text style={styles.tdSub}>{prop.bedrooms} BHK</Text>
-                      </View>
-
-                      <View style={{ flex: 1 }}>
-                        <StatusBadge status={prop.status} size="sm" />
-                      </View>
-
-                      <View style={{ flex: 1, alignItems: 'flex-end' }}>
-                        <TouchableOpacity
-                          style={styles.actionBtn}
-                          onPress={() => router.push(`/properties/${prop.id}` as any)}
-                        >
-                          <Text style={styles.actionBtnText}>View</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  );
-                })}
-              </View>
+                    );
+                  })}
+                </View>
+              </ScrollView>
             </View>
           )}
         </ScrollView>

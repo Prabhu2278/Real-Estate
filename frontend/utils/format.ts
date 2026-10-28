@@ -35,3 +35,25 @@ export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + '...';
 }
+
+export function getApiErrorMessage(err: any, fallback = 'An error occurred'): string {
+  const detail = err?.response?.data?.detail;
+  if (typeof detail === 'string') return detail;
+  if (Array.isArray(detail)) {
+    return detail
+      .map((d: any) => {
+        if (typeof d === 'string') return d;
+        if (d && typeof d === 'object') {
+          const loc = Array.isArray(d.loc) ? d.loc[d.loc.length - 1] : '';
+          return loc ? `${loc}: ${d.msg || 'Invalid input'}` : d.msg || 'Invalid input';
+        }
+        return String(d);
+      })
+      .join(', ');
+  }
+  if (detail && typeof detail === 'object') {
+    return detail.msg || detail.message || JSON.stringify(detail);
+  }
+  return err?.message || fallback;
+}
+

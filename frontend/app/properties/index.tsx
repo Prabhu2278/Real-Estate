@@ -74,11 +74,11 @@ export default function PropertyListingScreen() {
       <Navbar />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        <View style={styles.container}>
+        <View style={[styles.container, isMobile && { paddingHorizontal: SPACING.sm, paddingTop: SPACING.md }]}>
           {/* Header Row */}
-          <View style={styles.pageHeader}>
-            <View>
-              <Text style={styles.pageTitle}>Properties for Rent & Sale</Text>
+          <View style={[styles.pageHeader, isMobile && { flexDirection: 'row', flexWrap: 'wrap', gap: 10, alignItems: 'center' }]}>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.pageTitle, isMobile && { fontSize: 22 }]}>Properties for Rent & Sale</Text>
               <Text style={styles.pageSubtitle}>
                 {loading ? 'Searching properties...' : `Showing ${total} properties available`}
               </Text>
@@ -112,8 +112,8 @@ export default function PropertyListingScreen() {
             {/* Results Column */}
             <View style={styles.resultsCol}>
               {/* Top Control Bar: Search Input, Sorting, Grid/List Toggle */}
-              <View style={styles.controlBar}>
-                <View style={styles.searchBar}>
+              <View style={[styles.controlBar, isMobile && { padding: SPACING.sm, gap: 8 }]}>
+                <View style={[styles.searchBar, isMobile && { width: '100%', minWidth: '100%' }]}>
                   <Ionicons name="search" size={16} color={COLORS.textMuted} style={styles.searchIcon} />
                   <TextInput
                     style={styles.searchInput}
@@ -134,7 +134,7 @@ export default function PropertyListingScreen() {
                 </View>
 
                 {/* Right controls: Sorting & View toggle */}
-                <View style={styles.rightControls}>
+                <View style={[styles.rightControls, isMobile && { width: '100%', justifyContent: 'space-between' }]}>
                   <View style={styles.sortSelector}>
                     <Text style={styles.sortLabel}>Sort by:</Text>
                     <TouchableOpacity

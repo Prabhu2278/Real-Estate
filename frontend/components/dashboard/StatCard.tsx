@@ -22,14 +22,14 @@ export const StatCard: React.FC<StatCardProps> = ({
     <View style={styles.card}>
       <View style={styles.contentRow}>
         <View style={styles.textColumn}>
-          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.title} numberOfLines={1}>{title}</Text>
           <Text style={styles.value}>{value}</Text>
-          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+          {subtitle && <Text style={styles.subtitle} numberOfLines={1}>{subtitle}</Text>}
         </View>
 
         {icon && (
           <View style={[styles.iconWrap, { backgroundColor: `${color}15` }]}>
-            <Ionicons name={icon} size={22} color={color} />
+            <Ionicons name={icon} size={20} color={color} />
           </View>
         )}
       </View>
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
-    minWidth: 160,
+    minWidth: 130,
     flex: 1,
     ...SHADOWS.sm,
   },
@@ -57,13 +57,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: '600',
     color: COLORS.textMuted,
     marginBottom: 4,
   },
   value: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '700',
     color: COLORS.text,
   },
@@ -73,11 +73,11 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   iconWrap: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     borderRadius: RADIUS.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 8,
+    marginLeft: 6,
   },
 });

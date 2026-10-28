@@ -24,6 +24,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const isMobile = width < 768;
+  const isTablet = width >= 768 && width < 1024;
 
   const scrollViewRef = useRef<any>(null);
 
@@ -91,8 +92,8 @@ export default function HomeScreen() {
         >
           <View style={styles.heroOverlay}>
             <View style={styles.heroContent}>
-              <Text style={styles.heroTitle}>Find Your Dream Home</Text>
-              <Text style={styles.heroSubtitle}>
+              <Text style={[styles.heroTitle, isMobile && { fontSize: 26, lineHeight: 32 }]}>Find Your Dream Home</Text>
+              <Text style={[styles.heroSubtitle, isMobile && { fontSize: 14, lineHeight: 20, marginBottom: 20 }]}>
                 Discover the best properties for rent or sale in your favorite locations.
               </Text>
 
@@ -162,7 +163,7 @@ export default function HomeScreen() {
         </ImageBackground>
 
         {/* MAIN BODY CONTAINER */}
-        <View style={styles.mainContainer}>
+        <View style={[styles.mainContainer, isMobile && { paddingHorizontal: SPACING.sm, paddingVertical: 24 }]}>
           {/* FEATURED PROPERTIES */}
           <View style={styles.sectionHeader}>
             <View>
@@ -183,7 +184,7 @@ export default function HomeScreen() {
           ) : (
             <View style={styles.grid}>
               {featuredProperties.map((prop) => (
-                <View key={prop.id} style={[styles.gridCol, isMobile ? styles.gridCol12 : styles.gridCol4]}>
+                <View key={prop.id} style={[styles.gridCol, isMobile ? styles.gridCol12 : isTablet ? styles.gridCol6 : styles.gridCol4]}>
                   <PropertyCard property={prop} />
                 </View>
               ))}
@@ -202,7 +203,7 @@ export default function HomeScreen() {
             {popularLocations.map((loc) => (
               <TouchableOpacity
                 key={loc.name}
-                style={[styles.gridCol, isMobile ? styles.gridCol12 : styles.gridCol3]}
+                style={[styles.gridCol, isMobile ? styles.gridCol12 : isTablet ? styles.gridCol6 : styles.gridCol3]}
                 onPress={() => router.push(`/properties?city=${loc.city}&search=${loc.name}` as any)}
                 activeOpacity={0.88}
               >
@@ -228,7 +229,7 @@ export default function HomeScreen() {
             {categories.map((cat) => (
               <TouchableOpacity
                 key={cat.name}
-                style={styles.categoryCard}
+                style={[styles.categoryCard, isMobile && { minWidth: 100, padding: SPACING.sm }]}
                 onPress={() => router.push(`/properties?property_type=${cat.name}` as any)}
                 activeOpacity={0.8}
               >
@@ -260,7 +261,7 @@ export default function HomeScreen() {
 
               <View style={styles.grid}>
                 {recentProperties.map((prop) => (
-                  <View key={prop.id} style={[styles.gridCol, isMobile ? styles.gridCol12 : styles.gridCol4]}>
+                  <View key={prop.id} style={[styles.gridCol, isMobile ? styles.gridCol12 : isTablet ? styles.gridCol6 : styles.gridCol4]}>
                     <PropertyCard property={prop} />
                   </View>
                 ))}
@@ -269,7 +270,7 @@ export default function HomeScreen() {
           )}
 
           {/* WHY CHOOSE US / BENEFITS */}
-          <View style={styles.benefitsSection}>
+          <View style={[styles.benefitsSection, isMobile && { padding: SPACING.md, marginTop: 32 }]}>
             <Text style={styles.benefitsTitle}>Why Choose RealEstate?</Text>
             <Text style={styles.benefitsSubtitle}>
               We connect renters, buyers, and property owners with full transparency and verified listings.
@@ -309,7 +310,7 @@ export default function HomeScreen() {
           </View>
 
           {/* CONTACT & OFFICE DETAILS SECTION */}
-          <View style={styles.aboutSection}>
+          <View style={[styles.aboutSection, isMobile && { padding: SPACING.md, marginTop: 32 }]}>
             {/* Header Badge & Title */}
             <View style={styles.aboutHeader}>
               <View style={styles.aboutBadge}>
@@ -694,6 +695,9 @@ const styles = StyleSheet.create({
   },
   gridCol12: {
     width: '100%',
+  },
+  gridCol6: {
+    width: '50%',
   },
   gridCol4: {
     width: '33.333%',
